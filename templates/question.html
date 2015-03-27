@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}question{% endblock %}
+
+{% block content %}
+<br>
+
+<div class="row">
+	<div class="col-md-3" style="text-align: center;"	>
+		<a href="#">
+	      <img src="/uploads/profile_photo.jpeg" alt="avatar" class="img-circle avatar" 
+	      style="margin-top: 25px; 
+	      width: 90px; 
+	      height: 90px;">
+	    </a>
+	    <h4 class="votes">0</h4>
+	    <div style="text-align: center;">
+	    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
+		    <a href="#" class="glyphicon glyphicon-arrow-down"></a>
+	    </div>
+	</div>
+
+	<div class="col-md-9">
+		<h2>
+			Travel to Mars. Is this possible?
+		</h2>
+		<!-- text -->
+		<div class="text_question">
+			nyan<br>cat<br>to<br>nyan<br>cat<br>to<br>
+			<h3>add nickname to questions</h3>
+		</div>
+		<!-- /text -->
+		<div class="row">
+			<div class="col-md-12 tags_question">
+			<br>
+			<br>
+			Tags:
+			<a href="#">#Mars</a>
+		</div>
+		</div>
+	</div>
+
+	
+</div>
+
+<br>
+<!-- mimi line -->
+<div class="progress">
+  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%; background-color: #3A5795;">
+    <span class="sr-only">100% Complete</span>
+  </div>
+</div>
+<!-- /mimi line -->
+
+
+
+
+<!-- answers -->
+	<ul class="list-unstyled">
+	{% for story in 'abc' %}
+	<li>
+		<div class="row answer">
+			<!-- left answer column -->
+			<div class="col-md-2" style="text-align: center;">
+				<a href="#">
+			      <img src="/uploads/avatar.jpeg" alt="avatar" class="img-circle avatar">
+			    </a>
+			    <h5 class="votes">0</h5>
+			    <div style="text-align: center;">
+			    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
+				    <a href="#" class="glyphicon glyphicon-arrow-down"></a>
+			    </div>
+			</div>
+			<!-- /left answer column -->
+			
+			<!-- right answer column -->
+			<div class="col-md-10">
+				<div class="text_answer">
+					WOW<br>SO MUCH<br>MANY MARS<br>WOW<br>
+				</div>
+
+				<br>
+				<button type="button" class="btn btn-success btn-xs btn-lg correct_answer">
+				 	<span class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span> Correct
+				</button>
+			</div>
+			<!-- /right answer column -->
+
+
+		</div>
+
+
+	</li>
+	<br>
+	<div class="progress">
+	  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%; background-color: #F2F2F2;">
+	    <span class="sr-only">100% Complete</span>
+	  </div>
+	</div>
+	{% endfor %}
+
+<!-- /answers -->
+
+<br>
+
+<!-- add answer -->
+<div class="row new_answer">
+	<textarea class="form-control" rows="3" placeholder="Enter your answer"></textarea>
+	<br>
+	<button type="button" class="btn btn-success">Success</button>
+</div>
+
+<!-- /add answer -->
+
+{% endblock %}
+
+
+{% block user_field %}
+{{ block.super }}
+{% endblock %}

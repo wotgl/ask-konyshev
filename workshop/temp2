@@ -1,0 +1,68 @@
+return render(requests, 'index.html', {})
+
+
+TEMPLATE_DIRS = {
+	BASE_DIR + '/templates',
+	BASE_DIR + '/../templates', //1 of 2
+}
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="span8">
+
+		</div>
+
+		<div class="span4">
+
+		</div>
+	</div>
+</div>
+
+
+<h1>Top Questions</h1>
+
+
+in questions:
+#django
+	for n in str:
+		...
+
+
+.question{
+
+	.question:last-child{	//псевдоклассы, для некоторых объектов
+		margin bottom: 15px;
+	}
+	.question__left
+	{
+		floar:left;
+		wigth:20%;
+		box-sizing:border-box;	//что бы ширина не включала padding
+	}
+	.question__right
+	{
+		floar:left;
+		wigth:80%;
+	}
+}
+
+
+lorempixel.com - random pics
+
+
+mb create class questions
+	>> question[0]
+	>> ...
+
+
+	/question/{{q.id}}
+	OR
+	{{url 'index' q.id}} <- best
+
+
+
+	div
+	position absolute
+	bottom 0

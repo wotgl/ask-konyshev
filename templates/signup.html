@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<h2>Join to community</h2>
+
+	<div id="signup_data">
+		<form>
+			<div class="form-group">
+		    	<label for="exampleInputEmail1">Name</label>
+		    	<input type="text" class="form-control" id="inputName" placeholder="Full name" aria-describedby="basic-addon1">
+		  	</div>
+
+			<div class="form-group">
+				<label for="exampleInputEmail1">Email</label>
+				<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Keep in touch">
+			</div>
+
+			<div class="form-group">
+				<label for="exampleInputPassword1">Password</label>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="12345">
+			</div>
+
+			<div class="form-group">
+				<label for="exampleInputPassword1">Username</label>
+				<div class="input-group">
+				  <span class="input-group-addon" id="basic-addon1">@</span>
+				  <input type="text" class="form-control" placeholder="Be unique" aria-describedby="basic-addon1">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="exampleInputFile">File input</label>
+				<input type="file" id="exampleInputFile">
+			</div>
+
+			<p class="help-block">Just one click.</p>
+			<button type="submit" class="btn btn-default">Submit</button>
+		</form>
+		
+	</div>
+
+
+{% endblock %}
+
+
+{% block user_field %}
+{{ block.super }}
+{% endblock %}

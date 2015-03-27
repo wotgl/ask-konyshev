@@ -1,0 +1,149 @@
+body {
+  padding-top: 70px;
+}
+
+.navbar-default
+{
+	background-color: #3A5795;
+	border-color: white;
+	color: white;
+}
+
+
+a
+{
+	color: #6D84B4;
+}
+
+
+
+
+.label-info
+{
+	background-color: #5CB85C;
+	/*
+5CB85C
+0F8933
+	*/
+}
+
+/* title */
+.navbar-default .navbar-brand {
+    color: #ffffff;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #ffffff;
+}
+
+/*
+.navbar-default .navbar-brand{
+    color: white;
+}
+*/
+
+
+
+#search_field
+{
+	padding-top: 10px;
+}
+
+
+/*
+for new color to search field
+*/
+.search_field_class:focus {
+  border-color: white;
+}
+
+#ask_btn
+{
+	padding-top: 10px;
+}
+
+#user_field
+{
+	
+}
+
+#content
+{
+	
+}
+
+#column
+{
+	
+}
+
+.question
+{
+	position: relative;
+	/*
+	border: solid 1px black;
+	*/
+	margin-top: 10px;
+}
+
+.answer
+{
+	position: relative;
+	margin-top: 10px;
+}
+
+.correct_answer
+{
+	color: #5CB85C;
+	background: transparent;
+	
+	-webkit-border-radius: 0;
+	-moz-border-radius:    0;
+	border-radius:         0;
+}
+
+
+
+.correct_answer:hover, .correct_answer:focus, .correct_answer:active
+{
+	color: #5CB85C;
+	border-color: #5CB85C;
+	background: transparent;
+}
+
+
+.progress
+{
+	height: 2px;
+}
+
+.avatar
+{
+	margin-top: 10px;
+	width: 70px;
+	height: 70px;
+}
+
+.votes
+{
+	text-align: center;
+}
+
+.profile_photo
+{
+	margin-top: 10px;
+	width: 35px;
+	height: 35px;
+}
+
+#signup_data
+{
+	margin-top: 30px;
+}
+
+.question_footer1
+{
+	position: absolute;
+	bottom: 0px;
+}
+

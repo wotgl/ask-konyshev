@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Ask{% endblock %}
+
+{% block content %}
+<h2>New Question</h2>
+<br>
+
+<div id="new_question">
+	<form>
+		<div class="form-group">
+	    	<label>Title</label>
+	    	<input type="text" class="form-control" placeholder="Briefly about the question">
+	  	</div>
+
+	  	<div class="form-group">
+	    	<label>Text</label>
+	    	<textarea class="form-control" rows="3" placeholder="Details here"></textarea>
+	  	</div>
+
+	  	<div class="form-group">
+	    	<label>Tags</label>
+	    	<input type="text" class="form-control" placeholder="Quickly find">
+	  	</div>
+
+	  	<br>
+<button type="button" class="btn btn-success">Ask</button>
+
+	</form>
+</div>
+
+
+{% endblock %}
+
+
+{% block user_field %}
+{{ block.super }}
+{% endblock %}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="Django default" uuid="e6236b4b-6f38-4906-9068-f9b883c91a72">
+      <user-name>sasha1003</user-name>
+      <user-password>dfc9dfd8df9adf9fdf9adf98df9bdf93df92df9f</user-password>
+      <schema-pattern>ask_konyshev_db.*</schema-pattern>
+      <default-schemas>ask_konyshev_db.*</default-schemas>
+    </data-source>
+  </component>
+</project>

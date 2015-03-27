@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}index{% endblock %}
+
+{% block content %}
+
+<h3>Top Questions</h3>
+<!-- brand-color line -->
+<div class="progress">
+  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%; background-color: #3A5795;">
+    <span class="sr-only">100% Complete</span>
+  </div>
+</div>
+<!-- /brand-color line -->
+
+	<ul class="list-unstyled">
+	{% for story in 'abcde' %}
+	<li>
+		<div class="row question">
+			<!-- left question column -->
+			<div class="col-md-2" style="text-align: center;">
+				<a href="#">
+			      <img src="/uploads/avatar.jpeg" alt="avatar" class="img-circle avatar">
+			    </a>
+			    <h5 class="votes">0</h5>
+			    <div style="text-align: center;">
+			    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
+				    <a href="#" class="glyphicon glyphicon-arrow-down"></a>
+			    </div>
+			</div>
+			<!-- /left question column -->
+			
+			<!-- right question column -->
+			<div class="col-md-10">
+				<a href="/question" class="header_question" style="color: #3B5998;"><h4>Travel to Mars. Is this possible? </h4></a>
+				<div class="text_question">
+					WOW<br>
+				</div>
+				<div class="row">
+				<div class="col-md-3">
+					<a href="#">Comments <span class="badge">100500</span></a> 
+					
+				</div>
+				<div class="col-md-9">
+					Tags:
+					<a href="#">#Mars</a>
+					<a href="#">#SummerTravel</a>
+					<a href="#">#Mars</a>
+					<a href="#">#SummerTravel</a>
+					<a href="#">#Mars</a>
+					<a href="#">#SummerTravel</a>
+				</div>
+			</div>
+			</div>
+			<!-- /right question column -->
+		</div>
+
+		<br>
+		<!-- #F2F2F2 line -->
+		<div class="progress">
+		  <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="background-color: #F2F2F2;width: 100%;">
+		    <span class="sr-only">100% Complete</span>
+		  </div>
+		</div>
+		<!-- /#F2F2F2 line -->
+	</li>
+	{% endfor %}
+
+
+
+<!-- pagination -->
+<nav>
+	<div style="text-align: center;">
+	  <ul class="pagination">
+	    <li>
+	      <a href="#" aria-label="Previous">
+	        <span aria-hidden="true">&laquo;</span>
+	      </a>
+	    </li>
+	    <li><a href="#">1</a></li>
+	    <li><a href="#">2</a></li>
+	    <li><a href="#">3</a></li>
+	    <li><a href="#">4</a></li>
+	    <li><a href="#">5</a></li>
+	    <li>
+	      <a href="#" aria-label="Next">
+	        <span aria-hidden="true">&raquo;</span>
+	      </a>
+	    </li>
+	  </ul>
+	</div>
+</nav>
+<!-- /pagination -->
+
+{% endblock %}
+
+{% block user_field %}
+{{ block.super }}
+{% endblock %}

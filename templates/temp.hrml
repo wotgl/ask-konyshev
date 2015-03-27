@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{% block title %}base{% endblock %}</title>
+	<!-- Bootstrap -->
+	<link href="/bootstrap-3.3.4/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/base.css" rel="stylesheet">
+	</head>
+	<body>
+	<script src="/jquery-latest.js"></script>
+	<script src="/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+
+
+	
+	<nav class="navbar navbar-default navbar-fixed-top">
+			<!-- container-fluid -->
+      <div class="container-fluid">
+      	<a class="navbar-brand" href="/"><samp>ask-konyshev</samp>
+      		<p style="font-size: 10px;font-family: Times;">our stack is not overflow..</p></a>
+
+      	<div class="row-fluid">
+      		<div class="col-sm-7">
+						<!-- search field -->
+      			<div class="col-sm-10" id="search_field">
+	      			<div class="row">
+	      					<form>
+			      				<div class="form-group">
+			      					<input type="text" class="form-control" placeholder="Search is all you need">
+			      				</div>
+			      			</form>
+	      			</div>
+      			</div>
+      			<!-- /search field -->
+
+
+						<!-- ask button -->
+      			<div class="col-sm-2 text-center" id="ask_btn">
+      				<button type="submit" class="btn btn-success">Ask</button>
+      			</div>
+      			<!-- /ask button -->
+      		</div>
+
+
+					<!-- user field -->
+      		<div class="col-sm-3" id="user_field">
+      			{% block user_field %}
+      			<div class="row">
+              <div class="col-md-6">
+                <!-- empty -->
+              </div>
+
+              <div class="col-md-6">
+                <div class="row">
+                  <a href="/login">
+                    <button type="button" class="btn btn-link"><h4>Login</h4></button>
+                  </a>
+                  <a href="/signup">
+                    <button type="button" class="btn btn-link"><h4>Signup</h4></button>
+                  </a>    
+                </div>
+              </div>
+            </div>
+      			{% endblock %}
+      		</div>
+      		<!-- /user field -->
+      	</div>
+      </div>
+      <!-- /container-fluid -->
+    </nav>
+
+
+
+    
+    <div class="container">
+      <div class="row">
+
+				<!-- content -->
+        <div class="col-md-8" id="content">
+          {% block content %}Hello from base.html{% endblock %}
+        </div>
+        <!-- /content -->
+
+
+				<!-- column -->
+        <div class="col-md-4" id="column">
+        	<div class="Popular-Tags">
+	          <h3>Popular Tags</h3>
+	          <a href="#"><span class="label label-info">test</span></a>
+	          <a href="#"><span class="label label-info">TP</span></a>
+	          <a href="#"><span class="label label-info">WOW</span></a>
+	        </div>
+
+          <hr> <!-- mimi line -->
+
+          <div class="Best-Members">
+          	<h3>Best Members</h3>
+          	<ul>
+          		<il><p>admin</p>
+          		<il><p>John</p>
+          		<il><p>Bob</p>	
+          	</ul>
+          </div>
+
+       </div>
+       <!-- /column -->
+
+      </div>
+
+      <hr> <!-- mimi line -->
+
+      
+    </div> <!-- /container -->
+
+
+
+		
+
+
+
+	
+
+	</body>
+</html>
+

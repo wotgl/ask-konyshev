@@ -1,0 +1,23 @@
+
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Тег FORM, атрибут method</title>
+ </head>
+ <body>  
+ hello world from uploads
+ <form action="http://127.0.0.1/helloworlddjango" method="post">
+  <p><input type="text" name="data"></p>
+  <p><input type="submit" value="Send to Django!"></p>
+ </form>
+
+ <form action="http://127.0.0.1:8081" method="post">
+  <p><input type="text" name="data"></p>
+  <p><input type="submit" value="Send to WSGI!"></p>
+ </form>
+
+ <img src="/test.jpg">
+ </body>
+</html>
+
