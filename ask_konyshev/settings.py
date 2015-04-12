@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'core',
 )
 
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,8 +63,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ask_konyshev_db',
 		'USER': 'sasha1003',
-		'PASSWORD': 'cr05021985',
-		'HOST': '128.68.146.96',
+		'PASSWORD': '10031995',
+		#'HOST': '128.68.146.96',
+        'HOST': '188.166.29.128',
     }
 }
 
@@ -89,3 +91,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = '/uploads/'
