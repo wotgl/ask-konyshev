@@ -15,7 +15,7 @@ from datetime import datetime
 class Profile(models.Model):
     user = models.OneToOneField(User)
     rating = models.IntegerField(default=0)
-    avatar = models.ImageField()
+    #avatar = models.ImageField()
     filename = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -47,7 +47,9 @@ class Question(models.Model):
     date = models.DateTimeField(default=datetime.now)
     rating = models.IntegerField(default=0)
     answers = models.ManyToManyField(Answer)
+    #answers = models.ForeignKey(Answer)
     tags = models.ManyToManyField(Tag)
+    #tags = models.ForeignKey(Tag)
 
     def __unicode__(self):
         return str(self.title)
