@@ -1,7 +1,27 @@
 from django.shortcuts import render
+from core.models import Question, Profile
+
+N = 10
 
 def index(request):
-	return render(request, 'index.html')
+	question_list = Question.objects.order_by('-date')[:N]
+	return render(request, 'index.html', {'question_list': question_list})
+
+def popular(request):
+	#question_list = Question.objects.all()
+	question_list = Question.objects.order_by('-rating')[:N]
+	return render(request, 'popular.html', {'question_list': question_list})
+
+def tag(request, tag_name):
+	#question_list = Question.objects.all()
+	try:
+		question_list = Question.objects.order_by('-rating')[:N]
+		context = {'question_list': question_list, 'tag_name': tag_name}
+		return render(request, 'tag.html', context)
+	except Exception, e:
+		return 404
+
+
 
 def signup(request):
 	return render(request, 'signup.html')
