@@ -62,7 +62,7 @@ def createAnswer():
     count_answer = count_answer + 1
 
     text = str(count_answer) + '_text_answer' * 5
-    author_id = random.randint(0, count_user)
+    author_id = random.randint(1, count_user)
     author = Profile.objects.get(id=author_id)
     rating = random.randint(0, 10)
 
@@ -84,7 +84,7 @@ def createQuestion(count):
         count_question = count_question + 1
         title = 'title' + str(count_question)
         text = str(count_question) + '_text' * 10
-        author_id = random.randint(0, count_user)
+        author_id = random.randint(1, count_user)
         author = Profile.objects.get(id=author_id)
         rating = random.randint(0, 10)
         q = Question.objects.create(title=title, text=text, author=author, rating=rating)
