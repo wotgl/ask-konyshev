@@ -66,3 +66,47 @@ mb create class questions
 	div
 	position absolute
 	bottom 0
+
+
+	Вся бизнес-логика в Model!!!
+	STATIC_ROOT не особо нужно
+	MEDIA_ROOT полный путь куда загружать файлы пользователя
+	MEDIA_URL префикс в урле
+
+	Использовать отностильные пути.
+	BASE_DIR
+
+	сделать разделение на:
+	global_settings.py (пути, БД и т.д.)
+	local_settings.py
+
+	+ инклюдить урлы
+
+	регулярка (\d+) <=> 12345
+
+	делать отдельные вьюшки(не контроллеры, которые django.views)
+
+	сделать 404(если станица не существует, то вернуть 404)
+
+
+	(?P<pk>\d+)
+	Поместить переменнную в pk
+
+
+	проверять параметры GET/POST
+
+
+	для настроек профиля авторизованного пользователя или добавления вопросов:
+	from django.contrib.auth.decorators import @login_required(login_url='/login/')
+
+	роутер - урлс
+	контроллер - вью
+
+	использовать {{content | safe}}
+
+	как вариант вынести пагинатор в include
+
+
+	context-processor mb for best users;
+
+	

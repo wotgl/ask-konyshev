@@ -1,0 +1,20 @@
+Добавить кодировка в БД
+create database name_db character set utf8 collate utf8_general_ci;
+
+in MySQL:
+show create table core_profile;
+
+class QuestionManager(models.Manager):
+	def popular(self):
+		<code>
+
+Question.objects.popular()
+
+
+Django Debug toolbar:
+pip install
+INSTALLED_APPS
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+INTERNAL_IPS = '127.0.0.1'
+python manage.py collectstatic

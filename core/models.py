@@ -2,11 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
+class Rating(models.Model):
+    userID =  models.IntegerField()     #who like ID
+
+    def __unicode__(self):
+        return str(self.userID)
+
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    rating = models.IntegerField(default=0)
+    #rating = models.IntegerField(default=0)
     filename = models.CharField(max_length=50)
+    rating = models.ManyToManyField(Rating)
 
     def __unicode__(self):
         return str(self.user.username)
@@ -30,6 +38,7 @@ class Question(models.Model):
 
     def __unicode__(self):
         return str(self.title)
+
 
 class Answer(models.Model):
     text = models.TextField()

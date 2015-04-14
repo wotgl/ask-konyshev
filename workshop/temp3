@@ -1,0 +1,55 @@
+проверять данные с помощью трай-кетч
+
+
+передавать данные через JSON
+import json
+
+
+можно сделать:
+urlpatterns = patterns('ask',
+	url(r'^$', 'views.home', name='home')
+)
+
+
+вместо
+urlpatterns = patterns('',
+	url(r'^$', 'ask.views.home', name='home')
+)
+
+
+def home(request):
+	try:
+		page = (int)request.Get...
+	except Exception, e:
+		raise 404;
+
+
+использовать фильтры(например для даты)
+
+
+//отправка данных
+{{ question.content }}
+return render(request, 'base.html', { 'question': question }})
+
+{% for a in question.answwers %}
+{% endfor %}
+
+удобно, НО нельзя передавать параметры :с
+
+
+
+POST without @csrf
+
+<form method="post" action="{% url "add_question" %}">
+	{% csrf_token %}
+	<input type="sublmit">
+</form>
+
+все можно проверить. Лежит токен в куках. или же на странице хидден поле в хтмл.
+
+
+DEBUG=FALSE;
+404 page:
+create:
+/templates/404.html
+/templates/500.html
