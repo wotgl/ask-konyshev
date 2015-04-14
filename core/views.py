@@ -5,58 +5,37 @@ from core.models import Question, Profile, Tag, Answer
 
 N = 10	#Number of questions on page
 
-def index(request):
-	question_list = Question.objects.order_by('-date').all()
-	paginator = Paginator(question_list, N) # Show N contacts per page
 
-	page = request.GET.get('page')
-	try:
-		question_list = paginator.page(page)
-	except PageNotAnInteger:
-		# If page is not an integer, deliver first page.
-		question_list = paginator.page(1)
-	except EmptyPage:
-		# If page is out of range (e.g. 9999), deliver last page of results.
-		raise Http404('Not found')
+def main(request):
+	print request.path
+
+	#	Switch path
+	if request.path == '/':
+		question_list = Question.objects.order_by('-date').all()
+		html = 'index.html'
+	elif request.path == '/popular/':
+		question_list = Question.objects.order_by('-rating').all()
+		html = 'popular.html'
+
+	# Create Paginator
+	question_list = pagination(request, question_list, N)
 
 	# question_list = Question.objects.order_by('-date')[:N]
 	context = {'question_list': question_list}
-	return render(request, 'index.html', context)
+	return render(request, html, context)
 
-def popular(request):
-	question_list = Question.objects.order_by('-date').all()
-	paginator = Paginator(question_list, N) # Show N contacts per page
-
-	page = request.GET.get('page')
-	try:
-		question_list = paginator.page(page)
-	except PageNotAnInteger:
-		# If page is not an integer, deliver first page.
-		question_list = paginator.page(1)
-	except EmptyPage:
-		# If page is out of range (e.g. 9999), deliver last page of results.
-		question_list = paginator.page(paginator.num_pages)
-
-	context = {'question_list': question_list}
-	return render(request, 'popular.html', context)
 
 #	check nubmer of question
 def question(request, question_id):
 	try:
 		question = Question.objects.get(id=question_id)
 
+		# Get answers list
 		answer_list = question.answers.all()
-		paginator = Paginator(answer_list, 2) # Show N contacts per page
-		page = request.GET.get('page')
-		try:
-			answer_list = paginator.page(page)
-		except PageNotAnInteger:
-			# If page is not an integer, deliver first page.
-			answer_list = paginator.page(1)
-		except EmptyPage:
-			# If page is out of range (e.g. 9999), deliver last page of results.
-			answer_list = paginator.page(paginator.num_pages)
 
+		# Create Paginator
+		answer_list = pagination(request, answer_list, 2)
+		
 		context = {'question': question, 'answer_list': answer_list}
 		return render(request, 'question.html', context)
 	except Exception, e:
@@ -70,10 +49,11 @@ def tag(request, tag_name):
 		for q in question:
 			question_list.append(q)
 		
+	# Create Paginator
+	question_list = pagination(request, question_list, N)
+
 	context = {'question_list': question_list, 'tag_name': tag_name}
 	return render(request, 'tag.html', context)
-
-
 
 
 def signup(request):
@@ -88,3 +68,23 @@ def base(request):
 def ask(request):
     return render(request, 'ask.html')
 
+
+
+
+
+# Help Functions
+
+def pagination(request, list, number_of_page):
+	paginator = Paginator(list, number_of_page) # Show number_of_page contacts per page
+	page = request.GET.get('page')
+
+	try:
+		list = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		list = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver last page of results.
+		raise Http404('Not found')
+
+	return list
