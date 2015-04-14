@@ -15,7 +15,8 @@
     <nav class="navbar navbar-default navbar-fixed-top">
       <!-- container-fluid -->
       <div class="container-fluid">
-        <a class="navbar-brand" href="/"><samp>ask-konyshev</samp>
+        {# <a class="navbar-brand" href="/"><samp>ask-konyshev</samp> #}
+        <a class="navbar-brand" href="/">ask-konyshev
           <p style="font-size: 10px;font-family: Times;">our stack is not overflow..</p></a>
 
         <div class="row-fluid">
@@ -89,19 +90,20 @@
 
         <!-- content -->
         <div class="col-md-8" id="content">
+          {% block content_header %}{% endblock %}
           {% block content %}Hello from base.html{% endblock %}
         </div>
         <!-- /content -->
 
-
+        {% block right_block %}
         <!-- column -->
         <div class="col-md-4" id="column">
           <div class="Popular-Tags">
             <h3>Popular Tags</h3>
 
-            <a href="#"><span class="label label-info">#test</span></a>
-            <a href="#"><span class="label label-info">#TP</span></a>
-            <a href="#"><span class="label label-info">#WOW</span></a>
+            <a href="/tag/test"><span class="label label-info">#test</span></a>
+            <a href="/tag/TP"><span class="label label-info">#TP</span></a>
+            <a href="/tag/WOW"><span class="label label-info">#WOW</span></a>
           </div>
 
           <hr> <!-- mimi line -->
@@ -117,12 +119,14 @@
 
        </div>
        <!-- /column -->
+       {% endblock %}
 
       </div>
 
       <hr> <!-- mimi line -->   
     </div> <!-- /container -->
 
+    
 
 	  </div>
 

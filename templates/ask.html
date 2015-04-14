@@ -3,19 +3,22 @@
 {% block title %}Ask{% endblock %}
 
 {% block content %}
+<script type="text/javascript" src="/ask.js"></script>
 <h2>New Question</h2>
 <br>
 
 <div id="new_question">
-	<form>
+	<form name="myForm" onsubmit="return validateForm(this)">
 		<div class="form-group">
 	    	<label>Title</label>
-	    	<input type="text" class="form-control" placeholder="Briefly about the question">
+	    	<input type="text" class="form-control" id="inputTitle" placeholder="Briefly about the question">
+	    	<div id="message_inputTitle"></div>
 	  	</div>
 
 	  	<div class="form-group">
 	    	<label>Text</label>
-	    	<textarea class="form-control" rows="3" placeholder="Details here"></textarea>
+	    	<textarea class="form-control" rows="3" id="inputText" placeholder="Details here"></textarea>
+	    	<div id="message_inputText"></div>
 	  	</div>
 
 	  	<div class="form-group">
@@ -24,7 +27,7 @@
 	  	</div>
 
 	  	<br>
-<button type="button" class="btn btn-success">Ask</button>
+	  	<button type="submit" class="btn btn-success" id="">Ask</button>
 
 	</form>
 </div>

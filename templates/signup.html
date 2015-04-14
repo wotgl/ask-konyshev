@@ -3,44 +3,49 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
+<script type="text/javascript" src="/signup.js"></script>
 <h2>Join to community</h2>
 
 	<div id="signup_data">
-		<form>
+		<form name="myForm" onsubmit="return validateForm(this)">
 			<div class="form-group">
-		    	<label for="exampleInputEmail1">Name</label>
-		    	<input type="text" class="form-control" id="inputName" placeholder="Full name" aria-describedby="basic-addon1">
+		    	<label for="inputName">Name</label>
+		    	<input type="text" class="form-control" id="inputName" maxlength="40" placeholder="Full name" aria-describedby="basic-addon1">
+		    	 <div id="message_inputName"></div>
 		  	</div>
 
 			<div class="form-group">
-				<label for="exampleInputEmail1">Email</label>
-				<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Keep in touch">
+				<label for="inputEmail">Email</label>
+				<input type="text" class="form-control" id="inputEmail" placeholder="Keep in touch">
+				<div id="message_inputEmail"></div>
 			</div>
 
 			<div class="form-group">
-				<label for="exampleInputPassword1">Password</label>
-				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="12345">
+				<label for="inputPassword">Password</label>
+				<input type="password" class="form-control" id="inputPassword" placeholder="12345">
+				<div id="message_inputPassword"></div>
 			</div>
 
 			<div class="form-group">
-				<label for="exampleInputPassword1">Username</label>
+				<label for="inputUsername">Username</label>
 				<div class="input-group">
 				  <span class="input-group-addon" id="basic-addon1">@</span>
-				  <input type="text" class="form-control" placeholder="Be unique" aria-describedby="basic-addon1">
+				  <input type="text" class="form-control" id="inputUsername" maxlength="20" placeholder="Be unique" aria-describedby="basic-addon1">
 				</div>
+				<div id="message_inputUsername"></div>
 			</div>
 
 			<div class="form-group">
 				<label for="exampleInputFile">File input</label>
-				<input type="file" id="exampleInputFile">
+				<input type="file" id="inputFile">
 			</div>
 
 			<p class="help-block">Just one click.</p>
-			<button type="submit" class="btn btn-default">Submit</button>
+			<button type="submit" onclick="validateForm()" class="btn btn-default" id="">Submit</button>
+
 		</form>
 		
 	</div>
-
 
 {% endblock %}
 

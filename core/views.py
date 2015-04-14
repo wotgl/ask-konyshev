@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from core.models import Question, Profile
+from core.models import Question, Profile, Tag, Answer
 
 N = 10
 
@@ -8,18 +8,21 @@ def index(request):
 	return render(request, 'index.html', {'question_list': question_list})
 
 def popular(request):
-	#question_list = Question.objects.all()
 	question_list = Question.objects.order_by('-rating')[:N]
 	return render(request, 'popular.html', {'question_list': question_list})
 
+
 def tag(request, tag_name):
-	#question_list = Question.objects.all()
-	try:
-		question_list = Question.objects.order_by('-rating')[:N]
-		context = {'question_list': question_list, 'tag_name': tag_name}
-		return render(request, 'tag.html', context)
-	except Exception, e:
-		return 404
+	question_list = []
+	tag_list = Tag.objects.filter(name=tag_name).select_related('title')	#tag_list type = QuerySet
+	for tag in tag_list:
+		question = tag.question_set.all()	#question type = QuerySet
+		for q in question:
+			question_list.append(q)
+		
+	context = {'question_list': question_list, 'tag_name': tag_name}
+	return render(request, 'tag.html', context)
+
 
 
 

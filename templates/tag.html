@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+
+{% block title %}Tag{% endblock %}
+
+{% block content_header %}
+<h3>Tag {{ tag_name }}</h3>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+{% endblock %}
+
+{% block user_field %}
+{{ block.super }}
+{% endblock %}
+
