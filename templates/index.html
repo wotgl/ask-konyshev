@@ -43,7 +43,7 @@
 				</div>
 				<div class="row">
 				<div class="col-md-3">
-					<a href="#">Comments <span class="badge">{{ question.answers.count }}</span></a> 
+					<a href="#">Comments <span class="badge">{{ question.answer_set.count }}</span></a> 
 					
 				</div>
 				<div class="col-md-9">
@@ -82,7 +82,7 @@
 		        {% endif %}
 
 		        <span class="current">
-		            Page {{ question_list.number }} of {{ question_list.paginator.num_pages }}.
+		            Page {{ question_list.number }} of {{ question_list.paginator.num_pages }}
 		        </span>
 
 		        {% if question_list.has_next %}

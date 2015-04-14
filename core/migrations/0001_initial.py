@@ -30,14 +30,9 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('first_name', models.CharField(max_length=30)),
-                ('last_name', models.CharField(max_length=30)),
-                ('email', models.EmailField(max_length=75)),
-                ('username', models.CharField(unique=True, max_length=30)),
                 ('rating', models.IntegerField(default=0)),
-                ('avatar', models.ImageField(upload_to=b'')),
                 ('filename', models.CharField(max_length=50)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -51,7 +46,6 @@ class Migration(migrations.Migration):
                 ('text', models.TextField()),
                 ('date', models.DateTimeField(default=datetime.datetime.now)),
                 ('rating', models.IntegerField(default=0)),
-                ('answers', models.ManyToManyField(to='core.Answer')),
                 ('author', models.ForeignKey(to='core.Profile')),
             ],
             options={
@@ -78,6 +72,12 @@ class Migration(migrations.Migration):
             model_name='answer',
             name='author',
             field=models.ForeignKey(to='core.Profile'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='answer',
+            name='question',
+            field=models.ForeignKey(to='core.Question'),
             preserve_default=True,
         ),
     ]

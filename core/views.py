@@ -27,28 +27,27 @@ def main(request):
 
 #	check nubmer of question
 def question(request, question_id):
+	question = Question.objects.get(id=question_id)
+
+	# Get answers list
+	answer_list = question.answer_set.all()
+
+	# Create Paginator
+	number_of_answers = 2
+	answer_list = pagination(request, answer_list, number_of_answers)
+	
+	context = {'question': question, 'answer_list': answer_list}
+	return render(request, 'question.html', context)
+
+def tag(request, tag_name):	
 	try:
-		question = Question.objects.get(id=question_id)
+		tag_list = Tag.objects.get(name=tag_name)
+	except Tag.DoesNotExist, e:
+		raise Http404
 
-		# Get answers list
-		answer_list = question.answers.all()
+	
+	question_list = tag_list.question_set.all()
 
-		# Create Paginator
-		answer_list = pagination(request, answer_list, 2)
-		
-		context = {'question': question, 'answer_list': answer_list}
-		return render(request, 'question.html', context)
-	except Exception, e:
-		raise Http404("Question does not exist")
-
-def tag(request, tag_name):
-	question_list = []
-	tag_list = Tag.objects.filter(name=tag_name).select_related('title')	#tag_list type = QuerySet
-	for tag in tag_list:
-		question = tag.question_set.all()	#question type = QuerySet
-		for q in question:
-			question_list.append(q)
-		
 	# Create Paginator
 	question_list = pagination(request, question_list, N)
 

@@ -12,16 +12,6 @@ class Profile(models.Model):
         return str(self.user.username)
 
 
-class Answer(models.Model):
-    text = models.TextField()
-    author = models.ForeignKey(Profile)
-    date = models.DateTimeField(default=datetime.now)
-    rating = models.IntegerField(default=0)
-    correct_answer = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        return str(self.text)
-
 
 class Tag(models.Model):
     name = models.CharField(max_length=140)
@@ -36,11 +26,21 @@ class Question(models.Model):
     author = models.ForeignKey(Profile)
     date = models.DateTimeField(default=datetime.now)
     rating = models.IntegerField(default=0)
-    answers = models.ManyToManyField(Answer)
     tags = models.ManyToManyField(Tag)
 
     def __unicode__(self):
         return str(self.title)
+
+class Answer(models.Model):
+    text = models.TextField()
+    author = models.ForeignKey(Profile)
+    date = models.DateTimeField(default=datetime.now)
+    rating = models.IntegerField(default=0)
+    correct_answer = models.BooleanField(default=False)
+    question = models.ForeignKey(Question)
+
+    def __unicode__(self):
+        return str(self.text)
 
 
 

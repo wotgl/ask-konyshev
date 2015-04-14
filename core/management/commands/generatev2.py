@@ -35,7 +35,7 @@ def createProfile(count):
 
 #   Create random answer
 
-def createAnswer(): 
+def createAnswer(q): 
     count_answer = Answer.objects.count()
     count_user = Profile.objects.count()
 
@@ -46,7 +46,7 @@ def createAnswer():
     author = Profile.objects.get(id=author_id)
     rating = random.randint(0, 10)
 
-    a = Answer.objects.create(text=text, author=author, rating=rating)
+    a = Answer.objects.create(text=text, author=author, rating=rating, question=q)
 
     return a
 
@@ -57,9 +57,9 @@ def createTag():
     id_tag = random.randint(0, 20)
     name = 'tag' + str(id_tag)
 
-    t = Tag.objects.create(name=name)
+    t = Tag.objects.get_or_create(name=name)
 
-    return t
+    return t[0]     #(<Tag: 12>, True)
 
 
 #   Create random question
@@ -82,7 +82,7 @@ def createQuestion(count):
 
         #   Add answers
         for i in range(0, random.randint(0, 5)):
-            q.answers.add(createAnswer())
+           createAnswer(q)
 
         #   Add tags
         for i in range(0, random.randint(0, 5)):
