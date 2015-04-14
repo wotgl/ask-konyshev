@@ -17,7 +17,7 @@ def index(request):
 		question_list = paginator.page(1)
 	except EmptyPage:
 		# If page is out of range (e.g. 9999), deliver last page of results.
-		question_list = paginator.page(paginator.num_pages)
+		raise Http404('Not found')
 
 	# question_list = Question.objects.order_by('-date')[:N]
 	context = {'question_list': question_list}
@@ -45,7 +45,19 @@ def question(request, question_id):
 	try:
 		question = Question.objects.get(id=question_id)
 
-		context = {'question': question}
+		answer_list = question.answers.all()
+		paginator = Paginator(answer_list, 2) # Show N contacts per page
+		page = request.GET.get('page')
+		try:
+			answer_list = paginator.page(page)
+		except PageNotAnInteger:
+			# If page is not an integer, deliver first page.
+			answer_list = paginator.page(1)
+		except EmptyPage:
+			# If page is out of range (e.g. 9999), deliver last page of results.
+			answer_list = paginator.page(paginator.num_pages)
+
+		context = {'question': question, 'answer_list': answer_list}
 		return render(request, 'question.html', context)
 	except Exception, e:
 		raise Http404("Question does not exist")

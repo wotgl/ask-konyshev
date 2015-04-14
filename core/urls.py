@@ -3,7 +3,7 @@ __author__ = 'sasha1003'
 from django.contrib import admin
 from django.conf.urls import patterns, include, url
 
-from core.views import index, popular, question, tag, signup, login, base, ask, paginator
+from core.views import index, popular, question, tag, signup, login, base, ask
 
 urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
