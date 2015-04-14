@@ -1,16 +1,24 @@
 from django.shortcuts import render
 from core.models import Question, Profile, Tag, Answer
 
-N = 10
+N = 10	#Number of questions on page
 
 def index(request):
 	question_list = Question.objects.order_by('-date')[:N]
-	return render(request, 'index.html', {'question_list': question_list})
+	context = {'question_list': question_list}
+	return render(request, 'index.html', context)
 
 def popular(request):
 	question_list = Question.objects.order_by('-rating')[:N]
-	return render(request, 'popular.html', {'question_list': question_list})
+	context = {'question_list': question_list}
+	return render(request, 'popular.html', context)
 
+#	check nubmer of question
+def question(request, question_id):
+	question = Question.objects.get(id=question_id)
+
+	context = {'question': question}
+	return render(request, 'question.html', context)
 
 def tag(request, tag_name):
 	question_list = []
@@ -34,9 +42,6 @@ def login(request):
 
 def base(request):
     return render(request, 'base.html')
-
-def question(request):
-    return render(request, 'question.html')
 
 def ask(request):
     return render(request, 'ask.html')

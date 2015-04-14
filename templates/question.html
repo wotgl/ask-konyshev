@@ -8,13 +8,13 @@
 <div class="row">
 	<div class="col-md-3" style="text-align: center;"	>
 		<a href="#">
-	      <img src="/uploads/profile_photo.jpeg" alt="avatar" class="img-circle avatar" 
+	      <img src="/uploads/{{ question.author.filename }}" alt="avatar" class="img-circle avatar" 
 	      style="margin-top: 25px; 
 	      width: 90px; 
 	      height: 90px;">
 	    </a>
-	    <h4 class="question_username"><small>@username</small></h4>
-	    <h4 class="votes">0</h4>
+	    <h4 class="question_username"><small>@{{ question.author.user.username }}</small></h4>
+	    <h4 class="votes">{{ question.rating }}</h4>
 	    <div style="text-align: center;">
 	    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
 		    <a href="#" class="glyphicon glyphicon-arrow-down"></a>
@@ -22,23 +22,32 @@
 	</div>
 
 	<div class="col-md-9">
+		<!-- title -->
 		<h2>
-			Travel to Mars. Is this possible?
+			{{ question.title }}
 		</h2>
+		<!-- /title -->
+
 		<!-- text -->
 		<div class="text_question">
-			nyan<br>cat<br>to<br>nyan<br>cat<br>to<br>
-			<h3>add nickname to questions</h3>
+			{{ question.text }}
 		</div>
 		<!-- /text -->
+
+		<!-- tags -->
 		<div class="row">
 			<div class="col-md-12 tags_question">
-			<br>
-			<br>
-			Tags:
-			<a href="#">#Mars</a>
+				<br>
+				<br>
+				{% if question.tags.count %}
+					Tags:
+					{% for tag in question.tags.all %}
+						<a href="/tag/{{ tag.name }}">{{ tag.name }} </a>
+					{% endfor %}
+				{% endif %}
+			</div>
 		</div>
-		</div>
+		<!-- /tags -->
 	</div>
 
 	
@@ -58,16 +67,16 @@
 
 <!-- answers -->
 	<ul class="list-unstyled">
-	{% for story in 'abc' %}
+	{% for answer in question.answers.all %}
 	<li>
 		<div class="row answer">
 			<!-- left answer column -->
 			<div class="col-md-2" style="text-align: center;">
 				<a href="#">
-			      <img src="/uploads/avatar.jpeg" alt="avatar" class="img-circle avatar">
+			      <img src="/uploads/{{ answer.author.filename }}" alt="avatar" class="img-circle avatar">
 			    </a>
-			    <h5 class="question_username"><small>@username</small></h5>
-			    <h4 class="votes">0</h4>
+			    <h5 class="question_username"><small>@{{ answer.author.user.username }}</small></h5>
+			    <h4 class="votes">{{ answer.rating }}</h4>
 			    <div style="text-align: center;">
 			    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
 				    <a href="#" class="glyphicon glyphicon-arrow-down"></a>
@@ -78,7 +87,7 @@
 			<!-- right answer column -->
 			<div class="col-md-10">
 				<div class="text_answer">
-					WOW<br>SO MUCH<br>MANY MARS<br>WOW<br>
+					{{ answer.text }}
 				</div>
 
 				<br>
