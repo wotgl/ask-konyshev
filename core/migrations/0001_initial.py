@@ -30,7 +30,6 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('rating', models.IntegerField(default=0)),
                 ('filename', models.CharField(max_length=50)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],

@@ -27,7 +27,11 @@ def main(request):
 
 #	check nubmer of question
 def question(request, question_id):
-	question = Question.objects.get(id=question_id)
+	try:
+		question = Question.objects.get(id=question_id)
+	except Question.DoesNotExist, e:
+		raise Http404
+	
 
 	# Get answers list
 	answer_list = question.answer_set.all()
@@ -40,6 +44,9 @@ def question(request, question_id):
 	return render(request, 'question.html', context)
 
 def tag(request, tag_name):	
+
+	#	404 not cool
+
 	try:
 		tag_list = Tag.objects.get(name=tag_name)
 	except Tag.DoesNotExist, e:
