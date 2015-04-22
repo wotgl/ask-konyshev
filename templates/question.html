@@ -8,12 +8,12 @@
 <div class="row">
 	<div class="col-md-3" style="text-align: center;"	>
 		<a href="#">
-	      <img src="/uploads/{{ question.author.filename }}" alt="avatar" class="img-circle avatar" 
+	      <img src="/uploads/{{ question.author.profile.filename }}" alt="avatar" class="img-circle avatar" 
 	      style="margin-top: 25px; 
 	      width: 90px; 
 	      height: 90px;">
 	    </a>
-	    <h4 class="question_username"><small>@{{ question.author.user.username }}</small></h4>
+	    <h4 class="question_username"><small>@{{ question.author.username }}</small></h4>
 	    <h4 class="votes">{{ question.rating }}</h4>
 	    <div style="text-align: center;">
 	    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
@@ -74,9 +74,9 @@
 			<!-- left answer column -->
 			<div class="col-md-2" style="text-align: center;">
 				<a href="#">
-			      <img src="/uploads/{{ answer.author.filename }}" alt="avatar" class="img-circle avatar">
+			      <img src="/uploads/{{ answer.author.profile.filename }}" alt="avatar" class="img-circle avatar">
 			    </a>
-			    <h5 class="question_username"><small>@{{ answer.author.user.username }}</small></h5>
+			    <h5 class="question_username"><small>@{{ answer.author.username }}</small></h5>
 			    <h4 class="votes">{{ answer.rating }}</h4>
 			    <div style="text-align: center;">
 			    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>

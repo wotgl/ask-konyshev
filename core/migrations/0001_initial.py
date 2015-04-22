@@ -14,6 +14,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='ALike',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('value', models.IntegerField(default=0)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Answer',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -21,6 +32,8 @@ class Migration(migrations.Migration):
                 ('date', models.DateTimeField(default=datetime.datetime.now)),
                 ('rating', models.IntegerField(default=0)),
                 ('correct_answer', models.BooleanField(default=False)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('likes', models.ManyToManyField(to='core.ALike')),
             ],
             options={
             },
@@ -31,7 +44,18 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('filename', models.CharField(max_length=50)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='QLike',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('value', models.IntegerField(default=0)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -44,8 +68,9 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255)),
                 ('text', models.TextField()),
                 ('date', models.DateTimeField(default=datetime.datetime.now)),
-                ('rating', models.IntegerField(default=0)),
-                ('author', models.ForeignKey(to='core.Profile')),
+                ('rating', models.IntegerField(default=0, db_index=True)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('likes', models.ManyToManyField(to='core.QLike')),
             ],
             options={
             },
@@ -65,12 +90,6 @@ class Migration(migrations.Migration):
             model_name='question',
             name='tags',
             field=models.ManyToManyField(to='core.Tag'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='answer',
-            name='author',
-            field=models.ForeignKey(to='core.Profile'),
             preserve_default=True,
         ),
         migrations.AddField(

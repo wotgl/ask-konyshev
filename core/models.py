@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 class Profile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
     filename = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -17,18 +17,18 @@ class Tag(models.Model):
         return str(self.name)
 
 
+#   Question Like
 class QLike(models.Model):
-    author = models.ForeignKey(Profile)
+    author = models.ForeignKey(User)
     value = models.IntegerField(default=0)
-
 
 
 class Question(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
-    author = models.ForeignKey(Profile)
+    author = models.ForeignKey(User)
     date = models.DateTimeField(default=datetime.now)
-    rating = models.IntegerField(default=0)
+    rating = models.IntegerField(db_index=True, default=0)
     tags = models.ManyToManyField(Tag)
     likes = models.ManyToManyField(QLike)
 
@@ -36,14 +36,15 @@ class Question(models.Model):
         return str(self.title)
 
 
+#   Answer Like
 class ALike(models.Model):
-    author = models.ForeignKey(Profile)
+    author = models.ForeignKey(User)
     value = models.IntegerField(default=0)
 
 
 class Answer(models.Model):
     text = models.TextField()
-    author = models.ForeignKey(Profile)
+    author = models.ForeignKey(User)
     date = models.DateTimeField(default=datetime.now)
     rating = models.IntegerField(default=0)
     correct_answer = models.BooleanField(default=False)

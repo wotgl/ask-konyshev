@@ -27,7 +27,6 @@ def createProfile(count):
         user.last_name = 'Smith' + str(count_user)
         user.save()
 
-        #rating = random.randint(0, 10)
         filename_id = random.randint(0,10)      #In the directory '/uploads' must be '0.jpg'...'10.jpg' avatars
         filename = str(filename_id) + '.jpg'
         Profile.objects.create(user=user, filename=filename)
@@ -37,14 +36,13 @@ def createProfile(count):
 
 def createAnswer(q): 
     count_answer = Answer.objects.count()
-    count_user = Profile.objects.count()
+    count_user = User.objects.count()
 
     count_answer = count_answer + 1
 
     text = 'text_answer' + str(count_answer)
     author_id = random.randint(1, count_user)
-    author = Profile.objects.get(id=author_id)
-    #rating = random.randint(-10, 20)
+    author = User.objects.get(id=author_id)
 
     a = Answer.objects.create(text=text, author=author, question=q)
 
@@ -69,7 +67,7 @@ def createQuestion(count):
     print 'start createQuestion(%d)' %count
 
     count_question = Question.objects.count()
-    count_user = Profile.objects.count()
+    count_user = User.objects.count()
 
     for i in range(0, count):
         count_question = count_question + 1
@@ -77,7 +75,7 @@ def createQuestion(count):
         text = str(count_question) + '_text' * 10
         author_id = random.randint(1, count_user)
         try:
-            author = Profile.objects.get(id=author_id)
+            author = User.objects.get(id=author_id)
         except Profile.DoesNotExist, e:
             break
         #rating = random.randint(0, 10)
@@ -103,7 +101,7 @@ def createQuestion(count):
 def setLikes(count, author):
     #   count = random
     count = int(count)
-    print 'start setLikes(' + str(count) + ') from ' + str(author.user.username)
+    print 'start setLikes(' + str(count) + ') from ' + str(author.username)
 
     count_question = Question.objects.count()
     count_answer = Answer.objects.count()
@@ -117,7 +115,7 @@ def setLikes(count, author):
         #   Check for unique like
         f = True
         for like in likes:
-            if like.author.user.id == author.id:
+            if like.author.id == author.id:
                 f = False
                 break
 
@@ -139,7 +137,7 @@ def setLikes(count, author):
         #   Check for unique like
         f = True
         for like in likes:
-            if like.author.user.id == author.id:
+            if like.author.id == author.id:
                 f = False
                 break
 
