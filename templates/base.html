@@ -45,10 +45,52 @@
           </div>
 
 
+
+<!-- <div class="row">
+  <div class="col-md-4">
+    <a href="#">
+          <img src="/uploads/profile_photo.jpeg" alt="profile_photo" class="img-circle profile_photo">
+    </a>
+  </div>
+
+  <div class="col-md-8">
+    <h5>Pixel.Cookies.Rainbow.</h5>
+    <div class="row">
+      <div class="col-sm-6">
+        <a href="#" style="color: white;">Settings</a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/" style="color: white;">Log Out</a>
+      </div>
+    </div>
+  </div>
+</div> -->
+
           <!-- user field -->
           <div class="col-sm-3" id="user_field">
             {% block user_field %}
-            <div class="row">
+            {% if user.is_authenticated %}
+              <div class="row">
+                <div class="col-md-4">
+                  <a href="#">
+                        <img src="/uploads/{{ user.profile.filename }}" alt="profile_photo" class="img-circle profile_photo">
+                  </a>
+                </div>
+
+                <div class="col-md-8">
+                  <h5>{{ user.username }}</h5>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <a href="#" style="color: white;">Settings</a>
+                    </div>
+                    <div class="col-sm-6">
+                      <a href="/logout" style="color: white;">Log Out</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="row">
               <div class="col-md-5">
                 <!-- empty -->
               </div>
@@ -74,6 +116,10 @@
                 </div>
               </div>
             </div>
+            {% endif %}
+
+
+           
             {% endblock %}
           </div>
           <!-- /user field -->

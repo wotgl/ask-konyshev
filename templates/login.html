@@ -6,50 +6,48 @@
 <h2>You already know how this works</h2>
 <br>
 
-<form name="myForm" onsubmit="return validateForm(this)">
+<!--<form name="myForm" onsubmit="return validateForm(this)">-->
+<!-- <form name="myForm" action="{% url 'login' %}?continue=blablabla" method="post" onsubmit="return validateForm(this)">
+{% csrf_token %}
   <div class="form-group">
-    <label class="sr-only" for="inputEmail">Email address</label>
-    <input type="email" class="form-control" id="inputEmail" placeholder="Username or email">
+    <label for="inputUsername">Username</label>
+    <input type="text" class="form-control" id="inputUsername" name ="username" placeholder="Username or email">
   </div>
 
 
- <!--  <div class="form-group">
-    <label class="sr-only" for="inputPassword">Password</label>
-    <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-  </div>
-  <div id="message_inputPassword"></div> -->
 
   <div class="form-group">
 	<label for="inputPassword">Password</label>
-	<input type="password" class="form-control" id="inputPassword" placeholder="12345">
+	<input type="password" class="form-control" id="inputPassword" name ="password" placeholder="12345">
 </div>
 
 
-  <button type="submit" class="btn btn-default">Sign in</button>
+  <button type="submit" value="Login" class="btn btn-default">Sign in</button>
+</form>
+ -->
+
+{% if message %}
+    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+        <h5>{{ message.message }}</h5>
+    </div>
+{% endif %}
+
+<form action="{% url 'login' %}?continue={{ continue }}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+	{% for field in form %}
+	    <div class="fieldWrapper">
+	        <div class="form-group">
+	        	{{ field.label_tag }} 
+	        	{{ field }}
+	        </div>
+	    </div>
+	{% endfor %}
+	
+    <input type="submit" class="btn btn-default" value="Sign in" />
 </form>
 
 
+
 {% endblock %}
 
 
-{% block user_field %}
-<div class="row">
-	<div class="col-md-4">
-		<a href="#">
-      		<img src="/uploads/profile_photo.jpeg" alt="profile_photo" class="img-circle profile_photo">
-		</a>
-	</div>
-
-	<div class="col-md-8">
-		<h5>Pixel.Cookies.Rainbow.</h5>
-		<div class="row">
-			<div class="col-sm-6">
-				<a href="#" style="color: white;">Settings</a>
-			</div>
-			<div class="col-sm-6">
-				<a href="/" style="color: white;">Log Out</a>
-			</div>
-		</div>
-	</div>
-</div>
-{% endblock %}

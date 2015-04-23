@@ -7,7 +7,7 @@
 <h2>Join to community</h2>
 
 	<div id="signup_data">
-		<form name="myForm" onsubmit="return validateForm(this)">
+		<!-- <form name="myForm" onsubmit="return validateForm(this)">
 			<div class="form-group">
 		    	<label for="inputName">Name</label>
 		    	<input type="text" class="form-control" id="inputName" maxlength="40" placeholder="Full name" aria-describedby="basic-addon1">
@@ -43,7 +43,30 @@
 			<p class="help-block">Just one click.</p>
 			<button type="submit" onclick="validateForm()" class="btn btn-default" id="">Submit</button>
 
-		</form>
+		</form> -->
+
+	{% if message %}
+	    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+	        <h5>{{ message.message }}</h5>
+	    </div>
+	{% endif %}
+
+	<form action="{% url 'signup' %}" method="post" enctype="multipart/form-data">
+	    {% csrf_token %}
+		{% for field in form %}
+		    <div class="fieldWrapper">
+		        <div class="form-group">
+		        	{{ field.label_tag }} 
+		        	{{ field }}
+		        </div>
+		    </div>
+		{% endfor %}
+		
+		<p class="help-block">Just one click.</p>
+	    <input type="submit" class="btn btn-default" value="Submit" />
+	</form>
+
+
 		
 	</div>
 

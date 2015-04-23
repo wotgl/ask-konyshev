@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'wx_%itq^6u$tnyvlwdpu^h+m+ls^-!i02gql2zx@8!$^z2k(mv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = True
 
@@ -63,9 +63,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ask_konyshev_db',
         #'NAME': 'ask2',
-		'USER': 'sasha1003',
-		'PASSWORD': '10031995',
-		#'PASSWORD': 'cr05021985',
+        'USER': 'sasha1003',
+        'PASSWORD': '10031995',
+        #'PASSWORD': 'cr05021985',
         #'HOST': '192.168.1.44',
         #'HOST': '188.166.29.128',
         'HOST': '127.0.0.1',

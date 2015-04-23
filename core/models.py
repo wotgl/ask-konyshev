@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
-    filename = models.CharField(max_length=50)
+    filename = models.CharField(max_length=50, default='default.png')
 
     def __unicode__(self):
         return str(self.user.username)
