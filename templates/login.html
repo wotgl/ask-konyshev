@@ -6,26 +6,6 @@
 <h2>You already know how this works</h2>
 <br>
 
-<!--<form name="myForm" onsubmit="return validateForm(this)">-->
-<!-- <form name="myForm" action="{% url 'login' %}?continue=blablabla" method="post" onsubmit="return validateForm(this)">
-{% csrf_token %}
-  <div class="form-group">
-    <label for="inputUsername">Username</label>
-    <input type="text" class="form-control" id="inputUsername" name ="username" placeholder="Username or email">
-  </div>
-
-
-
-  <div class="form-group">
-	<label for="inputPassword">Password</label>
-	<input type="password" class="form-control" id="inputPassword" name ="password" placeholder="12345">
-</div>
-
-
-  <button type="submit" value="Login" class="btn btn-default">Sign in</button>
-</form>
- -->
-
 {% if message %}
     <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
         <h5>{{ message.message }}</h5>

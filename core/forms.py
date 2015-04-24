@@ -24,11 +24,6 @@ class SignUpForm(forms.Form):
 			'class': 'form-control',
 			'placeholder': 'Be unique',
 			}))
-	# name = forms.CharField(initial='', label='Name', max_length=100, 
-	# 	widget=forms.TextInput (attrs={
-	# 		'class': 'form-control',
-	# 		'placeholder': 'Full name',
-	# 		}))
 	email = forms.EmailField(initial='', label='Email', max_length=100, 
 		widget=forms.EmailInput(attrs={
 			'class': 'form-control',
@@ -41,9 +36,13 @@ class SignUpForm(forms.Form):
 			}))
 	pic = forms.FileField(label='File input', required=False)
 
+	def clean_pic(self):
+		print self.fields['pic']
+
+
 
 def handleUploadedFile(f):
 	filename = os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + f.name
 	with open(filename, 'wb') as destination:
 		destination.write(f.read())
-	return filename
+	return f.name

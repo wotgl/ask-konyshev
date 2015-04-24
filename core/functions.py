@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import Http404
 
 
 # Help Functions
@@ -28,4 +29,13 @@ def nameParser(name):
 	dict['last_name'] = last_name
 
 	return dict
+
+#	For redirect
+
+def checkURL(url):
+	pattern = '127.0.0.1'
+	if pattern in url:
+		return True
+	return False
+
 	

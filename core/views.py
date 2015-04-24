@@ -7,7 +7,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponsePermanentRedirect
 from django.core.urlresolvers import reverse
-from core.functions import pagination, nameParser
+from core.functions import pagination, nameParser, checkURL
+from django.db import IntegrityError
+from django.core.validators import validate_email, ValidationError
 
 N = 10	#Number of questions on page
 
@@ -67,8 +69,8 @@ def tag(request, tag_name):
 	return render(request, 'tag.html', context)
 
 
+#	Add check file
 def signup(request):
-
 	context = {'form': SignUpForm}
 
 	#	Check for auth
@@ -78,36 +80,62 @@ def signup(request):
 
 			if form.is_valid():
 				#	SignUp code here
+				valid = True 	#Valid to SignUp
+
 				username = form.cleaned_data['username']
 				email = form.cleaned_data['email']
 				password = form.cleaned_data['password']
 				filename = None
-									
+				
+				#	Check file existence		
 				if request.FILES:
 					filename = handleUploadedFile(request.FILES['pic'])		#	Upload file
 
-				#	Add check email
-				#	Add validate email
-				#	Add error message
-				try:
-					user = User.objects.create_user(username, email, password)
+				#	Check email for validity 
+				if valid:
+					try:
+						validate_email(email)
 
-					if filename:
-				        	Profile.objects.create(user=user, filename=filename)
-				        else:
-				        	Profile.objects.create(user=user)
+						valid = True
+					except ValidationError, e:
+						valid = False
+						context['message'] = {'message': 'This email not valid'}
 
-	        		#	SignUp done
-					#	Return to index page
-					return HttpResponsePermanentRedirect(reverse("index"))
-				except Exception, e:
-					raise e
+				#	Check email existence
+				if valid:
+					try:
+						User.objects.get(email=email)
 
-				#	context['message'] = {'message': 'This email is already exist'}
+						valid = False
+						context['message'] = {'message': 'This email is already exist'}
+					except User.DoesNotExist, e:
+						valid = True
+				
+				#	If all checks True => try to create the user 
+				if valid:
+					try:
+						user = User.objects.create_user(username, email, password)
+
+						if filename:
+					        	Profile.objects.create(user=user, filename=filename)
+					        else:
+					        	Profile.objects.create(user=user)
+
+		        		#	Login new user
+						user = authenticate(username=username, password=password)
+						login(request, user)
+
+						return HttpResponsePermanentRedirect(reverse("index"))		#	Return to index page
+					except IntegrityError, e:
+						context['message'] = {'message': 'This username is already exist'}
+
+			#	If bad fields: form is not valid
 			else:
-				#	If bad fields
 				context['message'] = {'message': 'Invalid fields'}
-
+			
+			#	Return initial form
+			context['form'] = form
+			
 		return render(request, 'signup.html', context)		#	return this page with error message
 
 	#	If user is authenticated	
@@ -116,7 +144,6 @@ def signup(request):
 
 
 def login_view(request):
-
 	context = {'form': LoginForm}
 
 	if not request.user.is_authenticated():
@@ -130,27 +157,26 @@ def login_view(request):
 				user = authenticate(username=username, password=password)
 
 				if user is not None:
-					if user.is_active:
+					if user.is_active:		#	may be banned?
 						login(request, user)
 						url = request.GET.get('continue')				#	Back where you came from
-						#	Add check:
-						#	if url belongs to our domain -> redirect to url
-						#	else redirect to index
-						return HttpResponsePermanentRedirect(url)		#	302
-						# 	Redirect
+
+						return HttpResponsePermanentRedirect(url)		#	302 Redirect
 					else:
-						context['form'] = {'message': 'Account is disable :c'}
 						#	Return a disable account
+						context['form'] = {'message': 'Account is disable :c'}
 				else:
+					#	Return an invalid login error message
 					form.set_initial(username)
 					context['form'] = form
 					context['message'] = {'message': 'We could not find an account for that username'}
-					print context['message']
-					#	Return an invalid login error message
+
+		#	Try get HTTP_REFERER
 		try:
 			context['continue'] = request.META['HTTP_REFERER']
 		except Exception, e:
 			context['continue'] = '/'
+
 		return render(request, 'login.html', context)
 	else:
 		return HttpResponsePermanentRedirect(reverse("index"))		#	302
@@ -165,7 +191,6 @@ def base(request):
 
 def ask(request):
     return render(request, 'ask.html')
-
 
 
 
