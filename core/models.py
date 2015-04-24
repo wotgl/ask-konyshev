@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
+#   Profile with User from django.contrib.auth.models;
+#   User include username, email, first_name, last_name, password etc
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     filename = models.CharField(max_length=50, default='default.png')
@@ -17,7 +19,7 @@ class Tag(models.Model):
         return str(self.name)
 
 
-#   Question Like
+#   Table of like questions
 class QLike(models.Model):
     author = models.ForeignKey(User)
     value = models.IntegerField(default=0)
@@ -36,7 +38,7 @@ class Question(models.Model):
         return str(self.title)
 
 
-#   Answer Like
+#   Table of like answers
 class ALike(models.Model):
     author = models.ForeignKey(User)
     value = models.IntegerField(default=0)
