@@ -147,10 +147,11 @@
           
           <div class="Popular-Tags">
             <h3>Tags</h3>
-
-            <a href="/tag/tag1"><span class="label label-info">#tag1</span></a>
-            <a href="/tag/tag2"><span class="label label-info">#tag2</span></a>
-            <a href="/tag/tag3"><span class="label label-info">#tag3</span></a>
+            {% for i in 'abcdef' %}
+              <a href="/tag/tag1">tag {{ i }}</a>
+            {% endfor %}
+            
+           
           </div>
 
           <hr> <!-- mimi line -->

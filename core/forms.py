@@ -21,8 +21,12 @@ class LoginForm(forms.Form):
 		self.fields['username'].initial = username
 
 
+#	Add regulars to username
+
 class SignUpForm(forms.Form):
-	username = forms.CharField(initial='', label='Username', max_length=100, 
+
+	#	Regular expressions:	first symbol is letter
+	username = forms.RegexField(initial='', regex=r'^\D+[0-9a-zA-Z_]+$', label='Username', max_length=50, 
 		widget=forms.TextInput (attrs={
 			'class': 'form-control',
 			'placeholder': 'Be unique',
@@ -32,7 +36,7 @@ class SignUpForm(forms.Form):
 			'class': 'form-control',
 			'placeholder': 'Keep in touch'
 			}))
-	password = forms.CharField(label='Password', max_length=100, 
+	password = forms.CharField(label='Password', max_length=50, 
 		widget=forms.PasswordInput(attrs={
 			'class': 'form-control',
 			'placeholder': '12345'

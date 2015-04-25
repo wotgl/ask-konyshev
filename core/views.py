@@ -94,9 +94,8 @@ def signup(request):
 				if request.FILES:
 					filename = handleUploadedFile(request.FILES['pic'])		#	Upload file
 				
-
-				#	Check size of file
-				if valid:
+				#	Check size of file if file = True
+				if valid and filename:
 					try:
 						form.check_pic()
 
@@ -136,7 +135,8 @@ def signup(request):
 						if filename:
 					        	Profile.objects.create(user=user, filename=filename)
 					        else:
-					        	Profile.objects.create(user=user)
+					        	filename = '/default/' + username[0].lower() + '.png'		#	Default avatar
+					        	Profile.objects.create(user=user, filename=filename)
 
 		        		#	Login new user
 						user = authenticate(username=username, password=password)
@@ -188,7 +188,7 @@ def login_view(request):
 					#	Return an invalid login error message
 					form.set_initial(username)
 					context['form'] = form
-					context['message'] = {'message': 'We could not find an account for that username'}
+					context['message'] = {'message': 'Unable to login'}
 
 		#	Try get HTTP_REFERER
 		try:
