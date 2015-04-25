@@ -16,16 +16,14 @@ class LoginForm(forms.Form):
 			'placeholder': '12345'
 			}))
 
-	#	If user enter wrong data
+	# If user enter wrong data
 	def set_initial(self, username):
 		self.fields['username'].initial = username
 
 
-#	Add regulars to username
-
 class SignUpForm(forms.Form):
 
-	#	Regular expressions:	first symbol is letter
+	# Regular expressions:	first symbol is letter
 	username = forms.RegexField(initial='', regex=r'^\D+[0-9a-zA-Z_]+$', label='Username', max_length=50, 
 		widget=forms.TextInput (attrs={
 			'class': 'form-control',
@@ -56,9 +54,27 @@ class SignUpForm(forms.Form):
 			raise ValidationError("Couldn't read uploaded image")
 
 
-
 def handleUploadedFile(f):
 	filename = os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + f.name
 	with open(filename, 'wb') as destination:
 		destination.write(f.read())
 	return f.name
+
+
+class AskForm(forms.Form):
+	title = forms.CharField(initial='', label='Title', max_length=100, 
+		widget=forms.TextInput (attrs={
+			'class': 'form-control',
+			'placeholder': 'Briefly about the question',
+			}))
+	text = forms.CharField(label='Text',  
+		widget=forms.Textarea(attrs={
+			'class': 'form-control',
+			'placeholder': 'Details here',
+			'rows':'5'
+			}))
+	tags = forms.CharField(initial='', label='Tags', max_length=50, required=False, 
+	widget=forms.TextInput (attrs={
+		'class': 'form-control',
+		'placeholder': 'Quickly find',
+		}))

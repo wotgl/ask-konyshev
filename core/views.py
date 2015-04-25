@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from core.models import Question, Profile, Tag, Answer
-from core.forms import LoginForm, SignUpForm, handleUploadedFile
+from core.forms import LoginForm, SignUpForm, handleUploadedFile, AskForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponsePermanentRedirect
@@ -17,7 +17,7 @@ N = 10	#Number of questions on page
 def main(request):
 	print request.path
 
-	#	Switch path
+	# Switch path
 	if request.path == '/':
 		question_list = Question.objects.order_by('-date').all()
 		html = 'index.html'
@@ -32,13 +32,12 @@ def main(request):
 	return render(request, html, context)
 
 
-#	check nubmer of question
+# check nubmer of question
 def question(request, question_id):
 	try:
 		question = Question.objects.get(id=question_id)
 	except Question.DoesNotExist, e:
 		raise Http404
-	
 
 	# Get answers list
 	answer_list = question.answer_set.all()
@@ -50,9 +49,10 @@ def question(request, question_id):
 	context = {'question': question, 'answer_list': answer_list}
 	return render(request, 'question.html', context)
 
+
 def tag(request, tag_name):	
 
-	#	404 not cool
+	# 404 not cool
 
 	try:
 		tag_list = Tag.objects.get(name=tag_name)
@@ -60,7 +60,7 @@ def tag(request, tag_name):
 		raise Http404
 
 	
-	question_list = tag_list.question_set.all()
+	question_list = tag_list.question_set.order_by('-date').all()
 
 	# Create Paginator
 	question_list = pagination(request, question_list, N)
@@ -69,65 +69,54 @@ def tag(request, tag_name):
 	return render(request, 'tag.html', context)
 
 
-#	Add check file
 def signup(request):
 	context = {'form': SignUpForm}
 
-	#	Check for auth
+	# Check for auth
 	if not request.user.is_authenticated():
 		if request.method == "POST":
 			form = SignUpForm(request.POST, request.FILES)
 
-
 			if form.is_valid():
-				#	SignUp code here
-				valid = True 	#Valid to SignUp
-
+				valid = True 	# Valid to SignUp
 
 				username = form.cleaned_data['username']
 				email = form.cleaned_data['email']
 				password = form.cleaned_data['password']
 				filename = form.cleaned_data['pic']				
 
-
-				#	Check file existence		
+				# Check file existence		
 				if request.FILES:
-					filename = handleUploadedFile(request.FILES['pic'])		#	Upload file
+					filename = handleUploadedFile(request.FILES['pic'])		# Upload file
 				
-				#	Check size of file if file = True
+				# Check size of file if file = True
 				if valid and filename:
 					try:
 						form.check_pic()
-
 						valid = True
 					except ValidationError, e:
 						valid = False
 						context['message'] = {'message': 'This file too large'}
 
-
-				#	Check email for validity 
+				# Check email for validity 
 				if valid:
 					try:
 						validate_email(email)
-
 						valid = True
 					except ValidationError, e:
 						valid = False
 						context['message'] = {'message': 'This email not valid'}
 
-
-				#	Check email existence
+				# Check email existence
 				if valid:
 					try:
 						User.objects.get(email=email)
-
 						valid = False
 						context['message'] = {'message': 'This email is already exist'}
 					except User.DoesNotExist, e:
 						valid = True
 					
-
-				#	If all checks True => try to create the user 
+				# If all checks True => try to create the user 
 				if valid:
 					try:
 						user = User.objects.create_user(username, email, password)
@@ -135,31 +124,28 @@ def signup(request):
 						if filename:
 					        	Profile.objects.create(user=user, filename=filename)
 					        else:
-					        	filename = '/default/' + username[0].lower() + '.png'		#	Default avatar
+					        	filename = '/default/' + username[0].lower() + '.png'		# Default avatar
 					        	Profile.objects.create(user=user, filename=filename)
 
-		        		#	Login new user
+		        		# Login new user
 						user = authenticate(username=username, password=password)
 						login(request, user)
 
-						return HttpResponsePermanentRedirect(reverse("index"))		#	Return to index page
+						return HttpResponsePermanentRedirect(reverse("index"))		# Return to index page
 					except IntegrityError, e:
 						context['message'] = {'message': 'This username is already exist'}
 
-
-			#	If bad fields: form is not valid
 			else:
+				# If bad fields: form is not valid
 				context['message'] = {'message': 'Invalid fields'}
 			
-
-			#	Return initial form
+			# Return initial form
 			context['form'] = form
 
-		return render(request, 'signup.html', context)		#	return this page with error message
+		return render(request, 'signup.html', context)		# return this page with error message
 
-	#	If user is authenticated	
+	# If user is authenticated	
 	return HttpResponsePermanentRedirect(reverse("index"))
-
 
 
 def login_view(request):
@@ -176,21 +162,20 @@ def login_view(request):
 				user = authenticate(username=username, password=password)
 
 				if user is not None:
-					if user.is_active:		#	may be banned?
+					if user.is_active:		# may be banned?
 						login(request, user)
-						url = request.GET.get('continue')				#	Back where you came from
+						url = request.GET.get('continue')				# Back where you came from
 
-						return HttpResponsePermanentRedirect(url)		#	302 Redirect
+						return HttpResponsePermanentRedirect(url)		# 302 Redirect
 					else:
-						#	Return a disable account
-						context['form'] = {'message': 'Account is disable :c'}
+						context['form'] = {'message': 'Account is disable :c'}	# Return a disable account
 				else:
-					#	Return an invalid login error message
+					# Return an invalid login error message
 					form.set_initial(username)
 					context['form'] = form
 					context['message'] = {'message': 'Unable to login'}
 
-		#	Try get HTTP_REFERER
+		# Try get HTTP_REFERER
 		try:
 			context['continue'] = request.META['HTTP_REFERER']
 		except Exception, e:
@@ -198,8 +183,9 @@ def login_view(request):
 
 		return render(request, 'login.html', context)
 	else:
-		return HttpResponsePermanentRedirect(reverse("index"))		#	302
+		return HttpResponsePermanentRedirect(reverse("index"))		# 302
 	
+
 def logout_view(request):
 	logout(request)
 	return HttpResponsePermanentRedirect(reverse("index"))
@@ -208,8 +194,34 @@ def logout_view(request):
 def base(request):
     return render(request, 'base.html')
 
+
 def ask(request):
-    return render(request, 'ask.html')
+	context = {'form': AskForm}
+	print request.user
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = AskForm(request.POST or None)
+
+			if form.is_valid():
+				title = form.cleaned_data['title']
+				text = form.cleaned_data['text']
+				tags = form.cleaned_data['tags']
+
+				question = Question.objects.create(title=title, text=text, author=User.objects.get(username=request.user))
+
+				tag_list = tags.split(' ')
+				for tag in tag_list:
+					t = Tag.objects.get_or_create(name=tag)
+					question.tags.add(t[0])
+
+				return HttpResponsePermanentRedirect('/question/' + str(question.id))
+			else:
+				context['message'] = {'message': 'Invalid fields'}
+				context['form'] = form
+	else:
+		context['message'] = {'message': '<a href="/login">Login</a> or <a href="/signup">sign up</a> to ask'}
+
+	return render(request, 'ask.html', context)
 
 
 

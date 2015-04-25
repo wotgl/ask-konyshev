@@ -8,7 +8,7 @@
 <br>
 
 <div id="new_question">
-	<form name="myForm" onsubmit="return validateForm(this)">
+	<!--<form name="myForm" onsubmit="return validateForm(this)">
 		<div class="form-group">
 	    	<label>Title</label>
 	    	<input type="text" class="form-control" id="inputTitle" placeholder="Briefly about the question">
@@ -29,6 +29,27 @@
 	  	<br>
 	  	<button type="submit" class="btn btn-success" id="">Ask</button>
 
+	</form>-->
+
+	{% if message %}
+	    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+	        <h5>{{ message.message | safe }}</h5>
+	    </div>
+	{% endif %}
+
+	<form action="{% url 'ask' %}" method="post" enctype="multipart/form-data">
+	    {% csrf_token %}
+		{% for field in form %}
+		    <div class="fieldWrapper">
+		        <div class="form-group">
+		        	{{ field.label_tag }} 
+		        	{{ field }}
+		        </div>
+		    </div>
+		{% endfor %}
+		
+		<br>
+	    <button type="submit" class="btn btn-success" id="">Ask</button>
 	</form>
 </div>
 
