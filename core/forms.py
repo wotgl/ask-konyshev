@@ -1,5 +1,8 @@
 from django import forms
 import os
+from django.core.files import File
+from django.core.validators import ValidationError
+
 
 class LoginForm(forms.Form):
 	username = forms.CharField(initial='', label='Username', max_length=100, 
@@ -34,10 +37,19 @@ class SignUpForm(forms.Form):
 			'class': 'form-control',
 			'placeholder': '12345'
 			}))
-	pic = forms.FileField(label='File input', required=False)
+	pic = forms.ImageField(label='File input', required=False)
 
-	def clean_pic(self):
-		print self.fields['pic']
+	def check_pic(self):
+		max_size = 4
+		pic = self.cleaned_data.get('pic',False)
+		if pic:
+			if pic._size > max_size * 1024 * 1024:
+				print '#1'
+				raise ValidationError("large size")
+				print '#2'
+			return pic
+		else:
+			raise ValidationError("Couldn't read uploaded image")
 
 
 

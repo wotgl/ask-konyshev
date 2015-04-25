@@ -78,18 +78,33 @@ def signup(request):
 		if request.method == "POST":
 			form = SignUpForm(request.POST, request.FILES)
 
+
 			if form.is_valid():
 				#	SignUp code here
 				valid = True 	#Valid to SignUp
 
+
 				username = form.cleaned_data['username']
 				email = form.cleaned_data['email']
 				password = form.cleaned_data['password']
-				filename = None
-				
+				filename = form.cleaned_data['pic']				
+
+
 				#	Check file existence		
 				if request.FILES:
 					filename = handleUploadedFile(request.FILES['pic'])		#	Upload file
+				
+
+				#	Check size of file
+				if valid:
+					try:
+						form.check_pic()
+
+						valid = True
+					except ValidationError, e:
+						valid = False
+						context['message'] = {'message': 'This file too large'}
+
 
 				#	Check email for validity 
 				if valid:
@@ -101,6 +116,7 @@ def signup(request):
 						valid = False
 						context['message'] = {'message': 'This email not valid'}
 
+
 				#	Check email existence
 				if valid:
 					try:
@@ -110,7 +126,8 @@ def signup(request):
 						context['message'] = {'message': 'This email is already exist'}
 					except User.DoesNotExist, e:
 						valid = True
-				
+					
+
 				#	If all checks True => try to create the user 
 				if valid:
 					try:
@@ -129,13 +146,15 @@ def signup(request):
 					except IntegrityError, e:
 						context['message'] = {'message': 'This username is already exist'}
 
+
 			#	If bad fields: form is not valid
 			else:
 				context['message'] = {'message': 'Invalid fields'}
 			
+
 			#	Return initial form
 			context['form'] = form
-			
+
 		return render(request, 'signup.html', context)		#	return this page with error message
 
 	#	If user is authenticated	
