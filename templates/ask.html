@@ -31,7 +31,6 @@
 
 	</form>-->
 
-	{% if user.is_authenticated %}
 		{% if message %}
 		    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
 		        <h5>{{ message.message | safe }}</h5>
@@ -55,9 +54,7 @@
 			{% else %}
 				<button type="submit" class="btn btn-success" disabled="disabled">Ask</button>
 			{% endif %}    
-		</form>
-	{% endif %}
-	
+		</form>	
 </div>
 
 
