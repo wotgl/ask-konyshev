@@ -69,6 +69,8 @@
 <!-- answers -->
 	<ul class="list-unstyled">
 	{% for answer in answer_list %}
+	<!-- style - because navbar; check base.css -->
+	<a name="{{ answer.id }}" style="padding-top: 70px;"></a>
 	<li>
 		<div class="row answer">
 			<!-- left answer column -->
@@ -136,14 +138,42 @@
 
 <!-- add answer -->
 <div class="row new_answer">
-	<textarea class="form-control" rows="3" placeholder="Enter your answer"></textarea>
+	<!-- <textarea class="form-control" rows="3" placeholder="Enter your answer"></textarea>
 	<br>
-	<button type="button" class="btn btn-success">Success</button>
+	<button type="button" class="btn btn-success">Success</button> -->
+
+	
+	    {% if user.is_authenticated %}
+		    {% if message %}
+			    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+			        <h5>{{ message.message | safe }}</h5>
+			    </div>
+			{% endif %}
+
+			<form action="{% url 'new_answer' %}" method="post" enctype="multipart/form-data">
+			    {% csrf_token %}
+				{% for field in form %}
+				    <div class="fieldWrapper">
+				        <div class="form-group">
+				        	{{ field.label_tag }} 
+				        	{{ field }}
+				        </div>
+				    </div>
+				{% endfor %}
+				<button type="submit" class="btn btn-success">Success</button>
+				<input type="hidden" name="question_id" value="{{ question.id }}">
+				<input type="hidden" name="page_id" value="{{ answer_list.paginator.num_pages }}">
+				<input type="hidden" name="count" value="{{ answer_list.paginator.count }}">
+			</form>
+		{% else %}
+			<div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+		        <h5><a href="/login">Login</a> or <a href="/signup">sign up</a> to answer</h5>
+		    </div>
+		{% endif %}
+
 </div>
 
 <!-- /add answer -->
-
-
 
 {% endblock %}
 

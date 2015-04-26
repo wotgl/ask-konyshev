@@ -31,26 +31,33 @@
 
 	</form>-->
 
-	{% if message %}
-	    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
-	        <h5>{{ message.message | safe }}</h5>
-	    </div>
-	{% endif %}
-
-	<form action="{% url 'ask' %}" method="post" enctype="multipart/form-data">
-	    {% csrf_token %}
-		{% for field in form %}
-		    <div class="fieldWrapper">
-		        <div class="form-group">
-		        	{{ field.label_tag }} 
-		        	{{ field }}
-		        </div>
+	{% if user.is_authenticated %}
+		{% if message %}
+		    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+		        <h5>{{ message.message | safe }}</h5>
 		    </div>
-		{% endfor %}
-		
-		<br>
-	    <button type="submit" class="btn btn-success" id="">Ask</button>
-	</form>
+		{% endif %}
+
+		<form action="{% url 'ask' %}" method="post" enctype="multipart/form-data">
+		    {% csrf_token %}
+			{% for field in form %}
+			    <div class="fieldWrapper">
+			        <div class="form-group">
+			        	{{ field.label_tag }} 
+			        	{{ field }}
+			        </div>
+			    </div>
+			{% endfor %}
+			
+			<br>
+			{% if user.is_authenticated %}
+				<button type="submit" class="btn btn-success">Ask</button>
+			{% else %}
+				<button type="submit" class="btn btn-success" disabled="disabled">Ask</button>
+			{% endif %}    
+		</form>
+	{% endif %}
+	
 </div>
 
 

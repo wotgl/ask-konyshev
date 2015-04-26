@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from core.models import Question, Profile, Tag, Answer
-from core.forms import LoginForm, SignUpForm, handleUploadedFile, AskForm
+from core.forms import LoginForm, SignUpForm, handleUploadedFile, AskForm, AnswerForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponsePermanentRedirect
@@ -11,7 +11,8 @@ from core.functions import pagination, nameParser, checkURL
 from django.db import IntegrityError
 from django.core.validators import validate_email, ValidationError
 
-N = 10	#Number of questions on page
+N = 10	# Number of questions on page
+number_of_answers = 10	 # Number of answers on question page
 
 
 def main(request):
@@ -34,6 +35,7 @@ def main(request):
 
 # check nubmer of question
 def question(request, question_id):
+
 	try:
 		question = Question.objects.get(id=question_id)
 	except Question.DoesNotExist, e:
@@ -43,11 +45,57 @@ def question(request, question_id):
 	answer_list = question.answer_set.all()
 
 	# Create Paginator
-	number_of_answers = 5
 	answer_list = pagination(request, answer_list, number_of_answers)
 	
 	context = {'question': question, 'answer_list': answer_list}
+
+	
+	'''
+	Get AnswerForm
+	set help values int HTML "question.html": question_id, page_id
+	where the latter is calculated as: 
+		answer_list(Page object)
+		answer_list.paginator(Paginator object)
+		answer_list.paginator.num_pages(count of num_pages)
+	'''
+	form = AnswerForm
+	context['form'] = form
+
 	return render(request, 'question.html', context)
+
+def new_answer(request):
+	context = {}
+
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = AnswerForm(request.POST or None)
+
+			if form.is_valid():
+				text = form.cleaned_data['text']
+				page_id = request.POST.get('page_id')
+				question_id = request.POST.get('question_id')
+				count = request.POST.get('count')
+
+				author = User.objects.get(username=request.user)
+				question = Question.objects.get(id=question_id)
+
+				answer = Answer.objects.create(text=text, author=author, question=question)
+ 
+
+				# Check 'next page'
+				# if new answer go to new page => page_id++
+				count = int(count)
+				if count % number_of_answers == 0 and not count == 0:
+					page_id = int(page_id)
+					page_id = page_id + 1
+
+				# Redirect to answer
+				return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": question_id}) 
+					+ "?page=" + str(page_id) + "#" + str(answer.id))
+			else:
+				return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": request.POST.get('question_id')}))
+
+	return HttpResponsePermanentRedirect(reverse('question', kwargs={"question_id": request.POST.get('question_id')}))
 
 
 def tag(request, tag_name):	
@@ -197,7 +245,7 @@ def base(request):
 
 def ask(request):
 	context = {'form': AskForm}
-	print request.user
+
 	if request.user.is_authenticated():
 		if request.method == "POST":
 			form = AskForm(request.POST or None)
@@ -207,7 +255,8 @@ def ask(request):
 				text = form.cleaned_data['text']
 				tags = form.cleaned_data['tags']
 
-				question = Question.objects.create(title=title, text=text, author=User.objects.get(username=request.user))
+				author = User.objects.get(username=request.user)
+				question = Question.objects.create(title=title, text=text, author=author)
 
 				tag_list = tags.split(' ')
 				for tag in tag_list:
@@ -219,7 +268,8 @@ def ask(request):
 				context['message'] = {'message': 'Invalid fields'}
 				context['form'] = form
 	else:
-		context['message'] = {'message': '<a href="/login">Login</a> or <a href="/signup">sign up</a> to ask'}
+		return HttpResponsePermanentRedirect(reverse('login'))
+		# context['message'] = {'message': '<a href="/login">Login</a> or <a href="/signup">sign up</a> to ask'}
 
 	return render(request, 'ask.html', context)
 

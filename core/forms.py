@@ -78,3 +78,21 @@ class AskForm(forms.Form):
 		'class': 'form-control',
 		'placeholder': 'Quickly find',
 		}))
+
+
+class AnswerForm(forms.Form):
+	text = forms.CharField(label='',  
+		widget=forms.Textarea(attrs={
+			'class': 'form-control',
+			'placeholder': 'Enter your answer',
+			'rows':'3'
+			}))
+	
+	# question_id = 0
+	# page_id = 0
+
+
+	def help_data(self, question_id, page_id):
+		a = 7
+		# self.question_id = question_id
+		# self.page_id = page_id
