@@ -6,6 +6,8 @@ from django.conf.urls import patterns, include, url
 from core.views import main, question, tag, signup, login_view, logout_view, base, ask, new_answer
 from core.views import settings, edit_profile, change_password, edit_photo, profile
 
+#TODO:	add regular to username -> 1 word
+
 urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
 	url(r'^$', main, name='index'),

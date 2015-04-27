@@ -24,7 +24,7 @@ class LoginForm(forms.Form):
 class SignUpForm(forms.Form):
 
 	# Regular expressions:	first symbol is letter
-	username = forms.RegexField(initial='', regex=r'^\D+[0-9a-zA-Z_]+$', label='Username', max_length=50, 
+	username = forms.RegexField(initial='', regex=r'^\D+[0-9a-zA-Z]+$', label='Username', max_length=50, 
 		widget=forms.TextInput (attrs={
 			'class': 'form-control',
 			'placeholder': 'Be unique',
