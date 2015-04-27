@@ -351,10 +351,11 @@ def edit_photo(request):
 
 	if request.method == "POST":
 		form = EditPhotoForm(request.POST, request.FILES)
+		context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 		if form.is_valid():
 			valid = True
-			
+
 			
 			filename = handleUploadedFile(request.FILES['pic'])		# Upload file
 
@@ -366,7 +367,6 @@ def edit_photo(request):
 					valid = True
 				except ValidationError, e:
 					valid = False
-					context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 					context['message_pic'] = {'message': 'This file too large'}
 
 			if valid:
@@ -379,8 +379,9 @@ def edit_photo(request):
 
 				user.save()
 				user.profile.save()
-			else:
-				return render(request, 'settings.html', context)
+		else:
+			context['message_pic'] = {'message': 'Invalid fields'}
+		return render(request, 'settings.html', context)
 
 	return HttpResponsePermanentRedirect(reverse('settings'))
 			
@@ -392,7 +393,7 @@ def profile(request, username):
 	try:
 		user_profile = User.objects.get(username=username)
 	except User.DoesNotExist, e:
-		return Http404
+		raise Http404
 
 	context = {'user_profile': user_profile}
 	return render(request, 'profile.html', context)
