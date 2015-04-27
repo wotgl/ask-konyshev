@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+
+
+
+
+<div class="row">
+	<div class="col-md-6">
+  		<h2>Profile @{{ user_profile.username }} </h2>
+	</div>
+	<img src="/uploads/{{ user_profile.profile.filename }}" alt="profile_photo" class="img-circle profile_photo" style="width: 80px; height: 80px;">
+</div>
+
+<br>
+
+{% if user_profile.first_name %}
+	<h4>First name:&emsp; {{ user_profile.first_name }} </h4>
+{% endif %}
+
+{% if user_profile.last_name %}
+	<h4>Last name:&emsp; {{ user_profile.last_name }} </h4>
+{% endif %}
+
+{% if user_profile.last_login %}
+	<h4>Last login:&emsp; &ensp;{{ user_profile.last_login }} </h4>
+{% endif %}
+
+{% if user_profile.date_joined %}
+	<h4>Data joined:&emsp;{{ user_profile.date_joined }} </h4>
+{% endif %}
+
+
+
+
+<h4></h4>
+
+
+{% endblock %}
+
+
+{% block user_field %}
+{{ block.super }}
+{% endblock %}

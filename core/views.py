@@ -3,6 +3,7 @@ from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from core.models import Question, Profile, Tag, Answer
 from core.forms import LoginForm, SignUpForm, handleUploadedFile, AskForm, AnswerForm
+from core.forms import EditProfileForm, ChangePasswordForm, EditPhotoForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponsePermanentRedirect
@@ -10,14 +11,13 @@ from django.core.urlresolvers import reverse
 from core.functions import pagination, nameParser, checkURL
 from django.db import IntegrityError
 from django.core.validators import validate_email, ValidationError
+from django.contrib.auth.hashers import check_password
 
 N = 10	# Number of questions on page
 number_of_answers = 10	 # Number of answers on question page
 
 
 def main(request):
-	print request.path
-
 	# Switch path
 	if request.path == '/':
 		question_list = Question.objects.order_by('-date').all()
@@ -62,6 +62,7 @@ def question(request, question_id):
 	context['form'] = form
 
 	return render(request, 'question.html', context)
+
 
 def new_answer(request):
 	context = {}
@@ -274,6 +275,124 @@ def ask(request):
 	return render(request, 'ask.html', context)
 
 
+def settings(request):
+	if not request.user.is_authenticated():
+		return HttpResponsePermanentRedirect(reverse("index"))
+
+	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
+
+	return render(request, 'settings.html', context)
 
 
+def edit_profile(request):
+	if not request.user.is_authenticated():
+		return HttpResponsePermanentRedirect(reverse("index"))
 
+	if request.method == "POST":
+		form = EditProfileForm(request.POST or None)
+
+		if form.is_valid():
+			first_name = form.cleaned_data['first_name']
+			last_name = form.cleaned_data['last_name']
+			try:
+				user = User.objects.get(username=request.user)
+			except User.DoesNotExist, e:
+				return Http404
+
+			if first_name:
+				user.first_name = first_name
+			if last_name:
+				user.last_name = last_name
+
+			user.save()
+
+	return HttpResponsePermanentRedirect(reverse('settings'))
+			
+			
+def change_password(request):
+	if not request.user.is_authenticated():
+		return HttpResponsePermanentRedirect(reverse("index"))
+
+	if request.method == "POST":
+		form = ChangePasswordForm(request.POST or None)
+
+		if form.is_valid():
+			password = form.cleaned_data['password']
+			new_password = form.cleaned_data['new_password']
+			repeat_new_password = form.cleaned_data['repeat_new_password']
+
+			try:
+				user = User.objects.get(username=request.user)
+			except User.DoesNotExist, e:
+				return Http404
+
+			context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
+
+			if check_password(password, user.password):
+				if new_password == repeat_new_password:
+					user.set_password(new_password)
+					user.save()
+
+					HttpResponsePermanentRedirect(reverse('logn'))
+				else:
+					context['message_pass'] = {'message': 'Passwords do not match'}
+			else:
+				context['message_pass'] = {'message': 'Wrong password'}
+			
+			return render(request, 'settings.html', context)
+
+
+	return HttpResponsePermanentRedirect(reverse('settings'))
+	
+		
+def edit_photo(request):
+	if not request.user.is_authenticated():
+		return HttpResponsePermanentRedirect(reverse("index"))
+
+	if request.method == "POST":
+		form = EditPhotoForm(request.POST, request.FILES)
+
+		if form.is_valid():
+			valid = True
+			
+			
+			filename = handleUploadedFile(request.FILES['pic'])		# Upload file
+
+			
+			# Check size of file if file = True
+			if valid and filename:
+				try:
+					form.check_pic()
+					valid = True
+				except ValidationError, e:
+					valid = False
+					context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
+					context['message_pic'] = {'message': 'This file too large'}
+
+			if valid:
+				try:
+					user = User.objects.get(username=request.user)
+				except User.DoesNotExist, e:
+					return Http404
+				
+				user.profile.filename = filename
+
+				user.save()
+				user.profile.save()
+			else:
+				return render(request, 'settings.html', context)
+
+	return HttpResponsePermanentRedirect(reverse('settings'))
+			
+
+def profile(request, username):
+	if not request.user.is_authenticated():
+		return HttpResponsePermanentRedirect(reverse('login'))
+
+	try:
+		user_profile = User.objects.get(username=username)
+	except User.DoesNotExist, e:
+		return Http404
+
+	context = {'user_profile': user_profile}
+	return render(request, 'profile.html', context)

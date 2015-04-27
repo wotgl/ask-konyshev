@@ -7,19 +7,24 @@
 
 <div class="row">
 	<div class="col-md-3" style="text-align: center;"	>
-		<a href="#">
+		<a href="/profile/{{ question.author.username }}">
 	      <img src="/uploads/{{ question.author.profile.filename }}" alt="avatar" class="img-circle avatar" 
 	      style="margin-top: 25px; 
 	      width: 90px; 
 	      height: 90px;">
 	    </a>
-	    <h4 class="question_username"><small>@{{ question.author.username }}</small></h4>
+	    <h4 class="question_username">
+	    	<a href="/profile/{{ question.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
+	            <small>@{{ question.author.username }}</small>
+      		</a>
+	    </h4>
 	    <h4 class="votes">{{ question.rating }}</h4>
 	    <div style="text-align: center;">
 	    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
 		    <a href="#" class="glyphicon glyphicon-arrow-down"></a>
 	    </div>
 	</div>
+
 
 	<div class="col-md-9">
 		<!-- title -->
@@ -54,6 +59,7 @@
 </div>
 
 <p style="text-align: right;margin-top: 20px;">{{ question.answer_set.count }} Answers </p>
+<a name="answers" style="padding-top: 72px;"></a> <!-- for jump from question list -->
 
 <!-- mimi line -->
 <div class="progress">
@@ -75,10 +81,14 @@
 		<div class="row answer">
 			<!-- left answer column -->
 			<div class="col-md-2" style="text-align: center;">
-				<a href="#">
+				<a href="/profile/{{ answer.author.username }}">
 			      <img src="/uploads/{{ answer.author.profile.filename }}" alt="avatar" class="img-circle avatar">
 			    </a>
-			    <h5 class="question_username"><small>@{{ answer.author.username }}</small></h5>
+			    <h5 class="question_username">
+			    	<a href="/profile/{{ answer.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
+                    	<small>@{{ answer.author.username }}</small>
+                  	</a>
+			    </h5>
 			    <h4 class="votes">{{ answer.rating }}</h4>
 			    <div style="text-align: center;">
 			    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>

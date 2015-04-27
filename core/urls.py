@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.conf.urls import patterns, include, url
 
 from core.views import main, question, tag, signup, login_view, logout_view, base, ask, new_answer
+from core.views import settings, edit_profile, change_password, edit_photo, profile
 
 urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
@@ -17,6 +18,13 @@ urlpatterns = patterns('',
 	url(r'^logout/', logout_view, name='logout'),
 	url(r'^base/', base, name='base'),
 	url(r'^ask/', ask, name='ask'),
+	url(r'^settings/', settings, name='settings'),
+	url(r'^edit_profile/', edit_profile, name='edit_profile'),
+	url(r'^change_password/', change_password, name='change_password'),
+	url(r'^edit_photo/', edit_photo, name='edit_photo'),
+	url(r'^profile/(?P<username>\w+)/$', profile, name='profile'),
+
+
 )
 
 

@@ -88,11 +88,50 @@ class AnswerForm(forms.Form):
 			'rows':'3'
 			}))
 	
-	# question_id = 0
-	# page_id = 0
+
+class EditProfileForm(forms.Form):
+	first_name = forms.CharField(initial='', label='First name', max_length=100, 
+		widget=forms.TextInput (attrs={
+			'class': 'form-control',
+			'placeholder': '',
+			}))
+	last_name = forms.CharField(initial='', label='Last name', max_length=100, required=False,
+		widget=forms.TextInput (attrs={
+			'class': 'form-control',
+			'placeholder': '',
+			}))
 
 
-	def help_data(self, question_id, page_id):
-		a = 7
-		# self.question_id = question_id
-		# self.page_id = page_id
+class EditPhotoForm(forms.Form):
+	pic = forms.ImageField(label='File input', required=False)
+
+	def check_pic(self):
+		max_size = 4
+		pic = self.cleaned_data.get('pic',False)
+		if pic:
+			if pic._size > max_size * 1024 * 1024:
+				print '#1'
+				raise ValidationError("large size")
+				print '#2'
+			return pic
+		else:
+			raise ValidationError("Couldn't read uploaded image")
+
+
+class ChangePasswordForm(forms.Form):
+	password = forms.CharField(label='Password', max_length=100, 
+		widget=forms.PasswordInput(attrs={
+			'class': 'form-control',
+			'placeholder': '12345'
+			}))
+	new_password = forms.CharField(label='New password', max_length=100, 
+		widget=forms.PasswordInput(attrs={
+			'class': 'form-control',
+			'placeholder': '54321'
+			}))
+	repeat_new_password = forms.CharField(label='Repeat new password', max_length=100, 
+		widget=forms.PasswordInput(attrs={
+			'class': 'form-control',
+			'placeholder': '54321'
+			}))
+

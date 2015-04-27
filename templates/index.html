@@ -22,10 +22,16 @@
 		<div class="row question">
 			<!-- left question column -->
 			<div class="col-md-2" style="text-align: center;">
-				<a href="#">
+				<a href="/profile/{{ question.author.username }}">
 			      <img src="/uploads/{{ question.author.profile.filename }}" alt="avatar" class="img-circle avatar">
 			    </a>
-			    <h5 class="question_username"><small>@{{ question.author.username }}</small></h5>
+			    <h5 class="question_username">
+			    	<a href="/profile/{{ question.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
+                    <small>@{{ question.author.username }}</small>
+                  </a>
+			    </h5>
+
+
 			    <h4 class="votes">{{ question.rating }}</h4>
 			    <div style="text-align: center;">
 			    	<a href="#" class="glyphicon glyphicon-arrow-up"></a>
@@ -42,18 +48,23 @@
 				<br><br>
 				</div>
 				<div class="row">
-				<div class="col-md-3">
-					<a href="#">Comments <span class="badge">{{ question.answer_set.count }}</span></a> 
-					
-				</div>
-				<div class="col-md-9">
-					{% if question.tags.count %}
-						Tags:
-						{% for tag in question.tags.all %}
-							<a href="/tag/{{ tag.name }}">{{ tag.name }} </a>
-						{% endfor %}
-					{% endif %}
-				</div>
+					<!-- Comment logic here -->
+					<div class="col-md-3">
+						{% if question.answer_set.count == 0 %}
+							<a href="/question/{{ question.id }}">Comments <span class="badge">{{ question.answer_set.count }}</span></a> 
+						{% else %}
+							<a href="/question/{{ question.id }}/#answers">Comments <span class="badge">{{ question.answer_set.count }}</span></a> 
+						{% endif %}
+
+					</div>
+					<div class="col-md-9">
+						{% if question.tags.count %}
+							Tags:
+							{% for tag in question.tags.all %}
+								<a href="/tag/{{ tag.name }}">{{ tag.name }} </a>
+							{% endfor %}
+						{% endif %}
+					</div>
 			</div>
 			</div>
 			<!-- /right question column -->
