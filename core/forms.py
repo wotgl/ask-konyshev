@@ -21,10 +21,6 @@ class LoginForm(forms.Form):
 			'placeholder': '12345'
 			}))
 
-	# If user enter wrong data
-	def set_initial(self, username):
-		self.fields['username'].initial = username
-
 
 class SignUpForm(forms.Form):
 
@@ -126,6 +122,23 @@ class AskForm(forms.Form):
 		'class': 'form-control',
 		'placeholder': 'Quickly find',
 		}))
+
+
+	def save(self, author_username):
+		new_title = self.cleaned_data['title']
+		new_text = self.cleaned_data['text']
+		new_tags = self.cleaned_data['tags']
+
+		author = User.objects.get(username=author_username)
+		question = Question.objects.create(title=new_title, text=new_text, author=author)
+
+		tag_list = new_tags.split(' ')
+		for tag in tag_list:
+			t = Tag.objects.get_or_create(name=tag)
+			question.tags.add(t[0])
+
+		return question
+
 
 
 class AnswerForm(forms.Form):

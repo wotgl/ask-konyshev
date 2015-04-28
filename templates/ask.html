@@ -8,35 +8,12 @@
 <br>
 
 <div id="new_question">
-	<!--<form name="myForm" onsubmit="return validateForm(this)">
-		<div class="form-group">
-	    	<label>Title</label>
-	    	<input type="text" class="form-control" id="inputTitle" placeholder="Briefly about the question">
-	    	<div id="message_inputTitle"></div>
-	  	</div>
-
-	  	<div class="form-group">
-	    	<label>Text</label>
-	    	<textarea class="form-control" rows="3" id="inputText" placeholder="Details here"></textarea>
-	    	<div id="message_inputText"></div>
-	  	</div>
-
-	  	<div class="form-group">
-	    	<label>Tags</label>
-	    	<input type="text" class="form-control" placeholder="Quickly find">
-	  	</div>
-
-	  	<br>
-	  	<button type="submit" class="btn btn-success" id="">Ask</button>
-
-	</form>-->
-
-		{% if message %}
+<!-- 		{% if message %}
 		    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
 		        <h5>{{ message.message | safe }}</h5>
 		    </div>
 		{% endif %}
-
+ -->
 		<form action="{% url 'ask' %}" method="post" enctype="multipart/form-data">
 		    {% csrf_token %}
 			{% for field in form %}
@@ -44,16 +21,18 @@
 			        <div class="form-group">
 			        	{{ field.label_tag }} 
 			        	{{ field }}
+			        	{% if field.errors %}
+						    <div class="alert alert-danger error__block" role="alert" style="padding: 0px;">
+						        <h5>{{ field.errors }}</h5>
+						    </div>
+						{% endif %}
 			        </div>
 			    </div>
 			{% endfor %}
 			
 			<br>
-			{% if user.is_authenticated %}
-				<button type="submit" class="btn btn-success">Ask</button>
-			{% else %}
-				<button type="submit" class="btn btn-success" disabled="disabled">Ask</button>
-			{% endif %}    
+			<button type="submit" class="btn btn-success">Ask</button>
+  
 		</form>	
 </div>
 

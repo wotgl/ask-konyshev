@@ -128,7 +128,7 @@ def signup(request):
 
 			if form.is_valid():
 				user = form.save()
-				
+
         		# Login new user
 				user = authenticate(username=user.username, password=form.cleaned_data['password'])
 				login(request, user)
@@ -167,7 +167,6 @@ def login_view(request):
 						context['form'] = {'message': 'Account is disable :c'}	# Return a disable account
 				else:
 					# Return an invalid login error message
-					form.set_initial(username)
 					context['form'] = form
 					context['message'] = {'message': 'Unable to login'}
 
@@ -199,25 +198,13 @@ def ask(request):
 			form = AskForm(request.POST or None)
 
 			if form.is_valid():
-				title = form.cleaned_data['title']
-				text = form.cleaned_data['text']
-				tags = form.cleaned_data['tags']
-
-				author = User.objects.get(username=request.user)
-				question = Question.objects.create(title=title, text=text, author=author)
-
-				tag_list = tags.split(' ')
-				for tag in tag_list:
-					t = Tag.objects.get_or_create(name=tag)
-					question.tags.add(t[0])
+				question = form.save(request.user)
 
 				return HttpResponseRedirect('/question/' + str(question.id))
-			else:
-				context['message'] = {'message': 'Invalid fields'}
-				context['form'] = form
+				
+			context['form'] = form
 	else:
 		return HttpResponseRedirect(reverse('login'))
-		# context['message'] = {'message': '<a href="/login">Login</a> or <a href="/signup">sign up</a> to ask'}
 
 	return render(request, 'ask.html', context)
 
