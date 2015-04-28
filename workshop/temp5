@@ -1,0 +1,19 @@
+
++ add 'scrf.js'
+
+{% block scripts %}
+	<script>
+		jquery ajax code here
+
+		$.ajax({
+			url: ;
+			type: ;
+			data: ;
+
+			})
+	</script>
+{% endblock %}
+
+
+
+ajax return json => import json

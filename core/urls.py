@@ -25,8 +25,6 @@ urlpatterns = patterns('',
 	url(r'^change_password/', change_password, name='change_password'),
 	url(r'^edit_photo/', edit_photo, name='edit_photo'),
 	url(r'^profile/(?P<username>\w+)/$', profile, name='profile'),
-
-
 )
 
 

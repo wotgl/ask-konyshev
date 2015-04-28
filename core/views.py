@@ -6,7 +6,7 @@ from core.forms import LoginForm, SignUpForm, handleUploadedFile, AskForm, Answe
 from core.forms import EditProfileForm, ChangePasswordForm, EditPhotoForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from core.functions import pagination, nameParser, checkURL
 from django.db import IntegrityError
@@ -94,9 +94,9 @@ def new_answer(request):
 				return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": question_id}) 
 					+ "?page=" + str(page_id) + "#" + str(answer.id))
 			else:
-				return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": request.POST.get('question_id')}))
+				return HttpResponseRedirect(reverse("question", kwargs={"question_id": request.POST.get('question_id')}))
 
-	return HttpResponsePermanentRedirect(reverse('question', kwargs={"question_id": request.POST.get('question_id')}))
+	return HttpResponseRedirect(reverse('question', kwargs={"question_id": request.POST.get('question_id')}))
 
 
 def tag(request, tag_name):	
@@ -127,74 +127,21 @@ def signup(request):
 			form = SignUpForm(request.POST, request.FILES)
 
 			if form.is_valid():
-				valid = True 	# Valid to SignUp
-
-				username = form.cleaned_data['username']
-				email = form.cleaned_data['email']
-				password = form.cleaned_data['password']
-				filename = form.cleaned_data['pic']				
-
-				# Check file existence		
-				if request.FILES:
-					filename = handleUploadedFile(request.FILES['pic'])		# Upload file
+				user = form.save()
 				
-				# Check size of file if file = True
-				if valid and filename:
-					try:
-						form.check_pic()
-						valid = True
-					except ValidationError, e:
-						valid = False
-						context['message'] = {'message': 'This file too large'}
+        		# Login new user
+				user = authenticate(username=user.username, password=form.cleaned_data['password'])
+				login(request, user)
 
-				# Check email for validity 
-				if valid:
-					try:
-						validate_email(email)
-						valid = True
-					except ValidationError, e:
-						valid = False
-						context['message'] = {'message': 'This email not valid'}
+				return HttpResponseRedirect(reverse("index"))		# Return to index page
 
-				# Check email existence
-				if valid:
-					try:
-						User.objects.get(email=email)
-						valid = False
-						context['message'] = {'message': 'This email is already exist'}
-					except User.DoesNotExist, e:
-						valid = True
-					
-				# If all checks True => try to create the user 
-				if valid:
-					try:
-						user = User.objects.create_user(username, email, password)
-
-						if filename:
-					        	Profile.objects.create(user=user, filename=filename)
-					        else:
-					        	filename = '/default/' + username[0].lower() + '.png'		# Default avatar
-					        	Profile.objects.create(user=user, filename=filename)
-
-		        		# Login new user
-						user = authenticate(username=username, password=password)
-						login(request, user)
-
-						return HttpResponsePermanentRedirect(reverse("index"))		# Return to index page
-					except IntegrityError, e:
-						context['message'] = {'message': 'This username is already exist'}
-
-			else:
-				# If bad fields: form is not valid
-				context['message'] = {'message': 'Invalid fields'}
-			
 			# Return initial form
 			context['form'] = form
 
 		return render(request, 'signup.html', context)		# return this page with error message
 
 	# If user is authenticated	
-	return HttpResponsePermanentRedirect(reverse("index"))
+	return HttpResponseRedirect(reverse("index"))
 
 
 def login_view(request):
@@ -215,7 +162,7 @@ def login_view(request):
 						login(request, user)
 						url = request.GET.get('continue')				# Back where you came from
 
-						return HttpResponsePermanentRedirect(url)		# 302 Redirect
+						return HttpResponseRedirect(url)		# 302 Redirect
 					else:
 						context['form'] = {'message': 'Account is disable :c'}	# Return a disable account
 				else:
@@ -232,12 +179,12 @@ def login_view(request):
 
 		return render(request, 'login.html', context)
 	else:
-		return HttpResponsePermanentRedirect(reverse("index"))		# 302
+		return HttpResponseRedirect(reverse("index"))		# 302
 	
 
 def logout_view(request):
 	logout(request)
-	return HttpResponsePermanentRedirect(reverse("index"))
+	return HttpResponseRedirect(reverse('index'))
 
 
 def base(request):
@@ -264,12 +211,12 @@ def ask(request):
 					t = Tag.objects.get_or_create(name=tag)
 					question.tags.add(t[0])
 
-				return HttpResponsePermanentRedirect('/question/' + str(question.id))
+				return HttpResponseRedirect('/question/' + str(question.id))
 			else:
 				context['message'] = {'message': 'Invalid fields'}
 				context['form'] = form
 	else:
-		return HttpResponsePermanentRedirect(reverse('login'))
+		return HttpResponseRedirect(reverse('login'))
 		# context['message'] = {'message': '<a href="/login">Login</a> or <a href="/signup">sign up</a> to ask'}
 
 	return render(request, 'ask.html', context)
@@ -277,7 +224,7 @@ def ask(request):
 
 def settings(request):
 	if not request.user.is_authenticated():
-		return HttpResponsePermanentRedirect(reverse("index"))
+		return HttpResponseRedirect(reverse("index"))
 
 	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
@@ -286,7 +233,9 @@ def settings(request):
 
 def edit_profile(request):
 	if not request.user.is_authenticated():
-		return HttpResponsePermanentRedirect(reverse("index"))
+		return HttpResponseRedirect(reverse("index"))
+
+	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 	if request.method == "POST":
 		form = EditProfileForm(request.POST or None)
@@ -305,13 +254,19 @@ def edit_profile(request):
 				user.last_name = last_name
 
 			user.save()
+		else:
+			context['message_profile'] = {'message': 'Invalid fields'}
+		
+		return render(request, 'settings.html', context)
 
-	return HttpResponsePermanentRedirect(reverse('settings'))
+	return HttpResponseRedirect(reverse('settings'))
 			
 			
 def change_password(request):
 	if not request.user.is_authenticated():
-		return HttpResponsePermanentRedirect(reverse("index"))
+		return HttpResponseRedirect(reverse("index"))
+
+	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 	if request.method == "POST":
 		form = ChangePasswordForm(request.POST or None)
@@ -326,32 +281,36 @@ def change_password(request):
 			except User.DoesNotExist, e:
 				return Http404
 
-			context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
-
 			if check_password(password, user.password):
 				if new_password == repeat_new_password:
 					user.set_password(new_password)
 					user.save()
 
-					HttpResponsePermanentRedirect(reverse('logn'))
+					user = authenticate(username=user.username, password=new_password)
+					login(request, user)
+
+					return HttpResponseRedirect(reverse('settings'))
 				else:
 					context['message_pass'] = {'message': 'Passwords do not match'}
 			else:
 				context['message_pass'] = {'message': 'Wrong password'}
 			
-			return render(request, 'settings.html', context)
+		context['message_pass'] = {'message': 'Invalid fields'}
+		
+		return render(request, 'settings.html', context)
 
 
-	return HttpResponsePermanentRedirect(reverse('settings'))
+	return HttpResponseRedirect(reverse('settings'))
 	
 		
 def edit_photo(request):
 	if not request.user.is_authenticated():
-		return HttpResponsePermanentRedirect(reverse("index"))
+		return HttpResponseRedirect(reverse("index"))
+
+	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 	if request.method == "POST":
 		form = EditPhotoForm(request.POST, request.FILES)
-		context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 		if form.is_valid():
 			valid = True
@@ -383,12 +342,12 @@ def edit_photo(request):
 			context['message_pic'] = {'message': 'Invalid fields'}
 		return render(request, 'settings.html', context)
 
-	return HttpResponsePermanentRedirect(reverse('settings'))
+	return HttpResponseRedirect(reverse('settings'))
 			
 
 def profile(request, username):
 	if not request.user.is_authenticated():
-		return HttpResponsePermanentRedirect(reverse('login'))
+		return HttpResponseRedirect(reverse('login'))
 
 	try:
 		user_profile = User.objects.get(username=username)

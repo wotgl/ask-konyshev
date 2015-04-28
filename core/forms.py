@@ -1,7 +1,12 @@
 from django import forms
 import os
 from django.core.files import File
-from django.core.validators import ValidationError
+from django.core.validators import validate_email, ValidationError
+from django.contrib.auth.models import User
+from core.models import Question, Profile, Tag, Answer
+
+
+
 
 
 class LoginForm(forms.Form):
@@ -41,24 +46,67 @@ class SignUpForm(forms.Form):
 			}))
 	pic = forms.ImageField(label='File input', required=False)
 
-	def check_pic(self):
+
+	def clean_email(self):
+		check_email = self.cleaned_data.get('email')
+		
+		try:
+			user = User.objects.get(email=check_email)
+			raise ValidationError('This email is already exist')
+		except User.DoesNotExist, e:
+			pass
+
+		return check_email
+
+
+	def clean_username(self):
+		check_username = self.cleaned_data.get('username')
+		
+		try:
+			user = User.objects.get(username=check_username)
+			raise ValidationError('This username is already exist')
+		except User.DoesNotExist, e:
+			pass
+
+		return check_username
+
+
+	def clean_pic(self):		
 		max_size = 4
-		pic = self.cleaned_data.get('pic',False)
-		if pic:
-			if pic._size > max_size * 1024 * 1024:
-				print '#1'
+		check_pic = self.cleaned_data.get('pic',False)
+		if check_pic:
+			if check_pic._size > max_size * 1024 * 1024:
 				raise ValidationError("large size")
-				print '#2'
-			return pic
+			return check_pic
+
+
+	def save(self):
+		new_username = self.cleaned_data.get('username')
+		new_email = self.cleaned_data.get('email')
+		new_password = self.cleaned_data.get('password')
+
+		check_pic = self.cleaned_data.get('pic',False)		# Check picture
+		if check_pic:
+			name_pic = handleUploadedFile(check_pic)	
+
+		user = User.objects.create_user(new_username, new_email, new_password)
+		if check_pic:
+			Profile.objects.create(user=user, filename=name_pic)
+			return user
 		else:
-			raise ValidationError("Couldn't read uploaded image")
+			filename = '/default/' + new_username[0].lower() + '.png'		# Default avatar
+        	Profile.objects.create(user=user, filename=filename)
+        	return user
 
 
 def handleUploadedFile(f):
-	filename = os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + f.name
+	# Generate random name
+	new_filename = "%s.%s" % (User.objects.make_random_password(10), f.name.split('.')[-1])
+
+	filename = os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + new_filename
 	with open(filename, 'wb') as destination:
 		destination.write(f.read())
-	return f.name
+	return new_filename
 
 
 class AskForm(forms.Form):
