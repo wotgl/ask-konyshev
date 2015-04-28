@@ -1,6 +1,9 @@
 *.pyc
 *.jpg
 *.jpeg
+*.png
+*.gif
+*.gitignore
 
 static/bootstrap-3.3.4/*
 core/migrations/*

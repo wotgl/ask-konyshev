@@ -103,7 +103,7 @@ class EditProfileForm(forms.Form):
 
 
 class EditPhotoForm(forms.Form):
-	pic = forms.ImageField(label='File input', required=False)
+	pic = forms.ImageField(label='File input')
 
 	def check_pic(self):
 		max_size = 4
