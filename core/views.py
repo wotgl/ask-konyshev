@@ -100,15 +100,11 @@ def new_answer(request):
 
 
 def tag(request, tag_name):	
-
-	# 404 not cool
-
 	try:
 		tag_list = Tag.objects.get(name=tag_name)
 	except Tag.DoesNotExist, e:
 		raise Http404
 
-	
 	question_list = tag_list.question_set.order_by('-date').all()
 
 	# Create Paginator
@@ -118,9 +114,7 @@ def tag(request, tag_name):
 	return render(request, 'tag.html', context)
 
 
-def signup(request):
-	context = {'form': SignUpForm}
-
+def signup(request):	
 	# Check for auth
 	if not request.user.is_authenticated():
 		if request.method == "POST":
@@ -136,7 +130,7 @@ def signup(request):
 				return HttpResponseRedirect(reverse("index"))		# Return to index page
 
 			# Return initial form
-			context['form'] = form
+			context = {'form': SignUpForm}
 
 		return render(request, 'signup.html', context)		# return this page with error message
 
@@ -191,8 +185,6 @@ def base(request):
 
 
 def ask(request):
-	context = {'form': AskForm}
-
 	if request.user.is_authenticated():
 		if request.method == "POST":
 			form = AskForm(request.POST or None)
@@ -201,8 +193,8 @@ def ask(request):
 				question = form.save(request.user)
 
 				return HttpResponseRedirect('/question/' + str(question.id))
-				
-			context['form'] = form
+
+			context = {'form': AskForm}
 	else:
 		return HttpResponseRedirect(reverse('login'))
 
@@ -225,25 +217,13 @@ def edit_profile(request):
 	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 	if request.method == "POST":
-		form = EditProfileForm(request.POST or None)
+		form = EditProfileForm(request.POST, request=request or None)
 
 		if form.is_valid():
-			first_name = form.cleaned_data['first_name']
-			last_name = form.cleaned_data['last_name']
-			try:
-				user = User.objects.get(username=request.user)
-			except User.DoesNotExist, e:
-				return Http404
-
-			if first_name:
-				user.first_name = first_name
-			if last_name:
-				user.last_name = last_name
-
-			user.save()
-		else:
-			context['message_profile'] = {'message': 'Invalid fields'}
+			form.save()
+			return HttpResponseRedirect(reverse('settings'))
 		
+		context['form_edit'] = form
 		return render(request, 'settings.html', context)
 
 	return HttpResponseRedirect(reverse('settings'))
@@ -256,36 +236,16 @@ def change_password(request):
 	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 	if request.method == "POST":
-		form = ChangePasswordForm(request.POST or None)
+		form = ChangePasswordForm(request.POST, request=request or None)
 
 		if form.is_valid():
-			password = form.cleaned_data['password']
-			new_password = form.cleaned_data['new_password']
-			repeat_new_password = form.cleaned_data['repeat_new_password']
-
-			try:
-				user = User.objects.get(username=request.user)
-			except User.DoesNotExist, e:
-				return Http404
-
-			if check_password(password, user.password):
-				if new_password == repeat_new_password:
-					user.set_password(new_password)
-					user.save()
-
-					user = authenticate(username=user.username, password=new_password)
-					login(request, user)
-
-					return HttpResponseRedirect(reverse('settings'))
-				else:
-					context['message_pass'] = {'message': 'Passwords do not match'}
-			else:
-				context['message_pass'] = {'message': 'Wrong password'}
-			
-		context['message_pass'] = {'message': 'Invalid fields'}
-		
-		return render(request, 'settings.html', context)
-
+			user = form.save()
+			user = authenticate(username=user.username, password=form.cleaned_data['new_password'])
+			login(request, user)
+			return HttpResponseRedirect(reverse('settings'))
+				
+		context['form_password'] = form
+		return render(request, 'settings.html', context)	
 
 	return HttpResponseRedirect(reverse('settings'))
 	
@@ -297,36 +257,11 @@ def edit_photo(request):
 	context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
 	if request.method == "POST":
-		form = EditPhotoForm(request.POST, request.FILES)
+		form = EditPhotoForm(request.POST, request.FILES, request=request)
 
 		if form.is_valid():
-			valid = True
-
-			
-			filename = handleUploadedFile(request.FILES['pic'])		# Upload file
-
-			
-			# Check size of file if file = True
-			if valid and filename:
-				try:
-					form.check_pic()
-					valid = True
-				except ValidationError, e:
-					valid = False
-					context['message_pic'] = {'message': 'This file too large'}
-
-			if valid:
-				try:
-					user = User.objects.get(username=request.user)
-				except User.DoesNotExist, e:
-					return Http404
-				
-				user.profile.filename = filename
-
-				user.save()
-				user.profile.save()
-		else:
-			context['message_pic'] = {'message': 'Invalid fields'}
+			form.save()
+		context['form_photo'] = form
 		return render(request, 'settings.html', context)
 
 	return HttpResponseRedirect(reverse('settings'))

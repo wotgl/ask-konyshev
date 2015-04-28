@@ -24,6 +24,10 @@
 		{% for field in form %}
 		    <div class="fieldWrapper">
 		        <div class="form-group">
+		        	{% if field.id == 'id_userID' %}
+		        		{{ field.value|default_if_none:"123" }}
+		        	{% endif %}
+
 		        	{{ field.label_tag }} 
 
 		        	{{ field }}

@@ -4,6 +4,7 @@ from django.core.files import File
 from django.core.validators import validate_email, ValidationError
 from django.contrib.auth.models import User
 from core.models import Question, Profile, Tag, Answer
+from django.contrib.auth.hashers import check_password
 
 
 
@@ -140,7 +141,6 @@ class AskForm(forms.Form):
 		return question
 
 
-
 class AnswerForm(forms.Form):
 	text = forms.CharField(label='',  
 		widget=forms.Textarea(attrs={
@@ -151,7 +151,7 @@ class AnswerForm(forms.Form):
 	
 
 class EditProfileForm(forms.Form):
-	first_name = forms.CharField(initial='', label='First name', max_length=100, 
+	first_name = forms.CharField(initial='', label='First name', max_length=100, required=True,
 		widget=forms.TextInput (attrs={
 			'class': 'form-control',
 			'placeholder': '',
@@ -163,20 +163,55 @@ class EditProfileForm(forms.Form):
 			}))
 
 
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super(EditProfileForm, self).__init__(*args, **kwargs)
+
+
+	def save(self):
+		new_first_name = self.cleaned_data['first_name']
+		new_last_name = self.cleaned_data['last_name']
+
+		try:
+			user = User.objects.get(username=self.request.user)
+		except User.DoesNotExist, e:
+			return Http404
+
+		if new_first_name:
+			user.first_name = new_first_name
+		if new_last_name:
+			user.last_name = new_last_name
+
+		user.save()
+
+
 class EditPhotoForm(forms.Form):
 	pic = forms.ImageField(label='File input')
 
-	def check_pic(self):
+
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super(EditPhotoForm, self).__init__(*args, **kwargs)
+
+
+	def clean_pic(self):		
 		max_size = 4
-		pic = self.cleaned_data.get('pic',False)
-		if pic:
-			if pic._size > max_size * 1024 * 1024:
-				print '#1'
+		check_pic = self.cleaned_data.get('pic',False)
+		if check_pic:
+			if check_pic._size > max_size * 1024 * 1024:
 				raise ValidationError("large size")
-				print '#2'
-			return pic
-		else:
-			raise ValidationError("Couldn't read uploaded image")
+			return check_pic
+
+	def save(self):
+		check_pic = self.cleaned_data.get('pic',False)		# Check picture
+		if check_pic:
+			name_pic = handleUploadedFile(check_pic)
+
+		user = User.objects.get(username=self.request.user)
+
+		user.profile.filename = name_pic
+		user.save()
+		user.profile.save()
 
 
 class ChangePasswordForm(forms.Form):
@@ -195,4 +230,39 @@ class ChangePasswordForm(forms.Form):
 			'class': 'form-control',
 			'placeholder': '54321'
 			}))
+
+
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super(ChangePasswordForm, self).__init__(*args, **kwargs)
+
+
+	def clean_password(self):
+		check_pass = self.cleaned_data['password']
+		user = User.objects.get(username=self.request.user)
+
+		if not check_password(check_pass, user.password):
+			raise ValidationError('Wrong password')
+		return check_pass
+
+
+	def clean(self):
+		check_new_password = self.cleaned_data.get('new_password')
+		check_repeat_new_password = self.cleaned_data.get('repeat_new_password')
+
+		if check_new_password != check_repeat_new_password:
+			self.add_error('new_password', 'Passwords do not match')
+			raise ValidationError('Passwords do not match')
+
+
+	def save(self):
+		print self.cleaned_data.get('new_password')
+		new_pass = self.cleaned_data.get('new_password')
+
+		user = User.objects.get(username=self.request.user)
+
+		user.set_password(new_pass)
+		user.save()
+
+		return user
 
