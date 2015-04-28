@@ -20,9 +20,6 @@ class Migration(migrations.Migration):
                 ('value', models.IntegerField(default=0)),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Answer',
@@ -35,20 +32,14 @@ class Migration(migrations.Migration):
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('likes', models.ManyToManyField(to='core.ALike')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Profile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('filename', models.CharField(default=b'default.png', max_length=50)),
+                ('filename', models.ImageField(default=b'default.png', upload_to=b'/uploads/')),
                 ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='QLike',
@@ -57,9 +48,6 @@ class Migration(migrations.Migration):
                 ('value', models.IntegerField(default=0)),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Question',
@@ -72,9 +60,6 @@ class Migration(migrations.Migration):
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('likes', models.ManyToManyField(to='core.QLike')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Tag',
@@ -82,20 +67,15 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=140)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='question',
             name='tags',
             field=models.ManyToManyField(to='core.Tag'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='answer',
             name='question',
             field=models.ForeignKey(to='core.Question'),
-            preserve_default=True,
         ),
     ]

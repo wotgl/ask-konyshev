@@ -27,8 +27,8 @@ def createProfile(count):
         user.last_name = 'Smith' + str(count_user)
         user.save()
 
-        filename_id = random.randint(0,10)      #In the directory '/uploads' must be '0.jpg'...'10.jpg' avatars
-        filename = str(filename_id) + '.jpg'
+        # filename_id = random.randint(0,10)      #In the directory '/uploads' must be '0.jpg'...'10.jpg' avatars
+        filename = 'default.png'
         Profile.objects.create(user=user, filename=filename)
 
 
@@ -157,8 +157,11 @@ def setLikes(count, author):
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
+    def add_arguments(self, parser):
+        parser.add_argument('count', nargs='+', type=str)
+
     def handle(self, *args, **options):
-        if args[0] == 'Profile':
-            createProfile(args[1])
-        if args[0] == 'Question':
-            createQuestion(args[1])
+        if options['count'][0] == 'Profile':
+            createProfile(int(options['count'][1]))
+        if options['count'][0] == 'Question':
+            createQuestion(int(options['count'][1]))
