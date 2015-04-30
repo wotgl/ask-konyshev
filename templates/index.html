@@ -43,8 +43,10 @@
 			<!-- right question column -->
 			<div class="col-md-10">
 				<a href="/question/{{ question.id }}" class="header_question" style="color: #3B5998;"><h4>{{ question.title }}</h4></a>
-				<div class="text_question">
-				{{ question.text }}
+				<div class="text_question" style="word-wrap: break-word;">
+				
+				<!-- <p>{{ question.text|truncatechars_html:600 }}</p> -->
+				<p>{{ question.text | truncatechars_html:600 }}</p>
 				<br><br>
 				</div>
 				<div class="row">

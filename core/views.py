@@ -115,6 +115,7 @@ def tag(request, tag_name):
 
 
 def signup(request):	
+	context = {'form': SignUpForm}
 	# Check for auth
 	if not request.user.is_authenticated():
 		if request.method == "POST":
@@ -130,7 +131,7 @@ def signup(request):
 				return HttpResponseRedirect(reverse("index"))		# Return to index page
 
 			# Return initial form
-			context = {'form': SignUpForm}
+			context['form'] = form
 
 		return render(request, 'signup.html', context)		# return this page with error message
 
@@ -154,7 +155,7 @@ def login_view(request):
 				if user is not None:
 					if user.is_active:		# may be banned?
 						login(request, user)
-						url = request.GET.get('continue')				# Back where you came from
+						url = request.GET.get('redirect')				# Back where you came from
 
 						return HttpResponseRedirect(url)		# 302 Redirect
 					else:
@@ -162,13 +163,25 @@ def login_view(request):
 				else:
 					# Return an invalid login error message
 					context['form'] = form
+					context['next'] = request.POST.get('next')
 					context['message'] = {'message': 'Unable to login'}
 
-		# Try get HTTP_REFERER
-		try:
-			context['continue'] = request.META['HTTP_REFERER']
-		except Exception, e:
-			context['continue'] = '/'
+		if request.method == 'GET':
+			'''
+				If user has true redirect e.g. /ask; /profile/<id>;
+					set context['next'] = redirect;
+				else 
+					get HTTP_REFERER
+			'''
+			if not request.GET.get('redirect'):
+				# Try get HTTP_REFERER
+				try:
+					context['next'] = request.META['HTTP_REFERER']
+				except Exception, e:
+					context['next'] = '/'	
+			else:
+				context['next'] = request.GET.get('redirect')
+
 
 		return render(request, 'login.html', context)
 	else:
@@ -185,6 +198,7 @@ def base(request):
 
 
 def ask(request):
+	context = {'form': AskForm}
 	if request.user.is_authenticated():
 		if request.method == "POST":
 			form = AskForm(request.POST or None)
@@ -193,10 +207,11 @@ def ask(request):
 				question = form.save(request.user)
 
 				return HttpResponseRedirect('/question/' + str(question.id))
-
-			context = {'form': AskForm}
+			context['form'] = form
 	else:
-		return HttpResponseRedirect(reverse('login'))
+		# add redirect to /ask after login
+		request.META['HTTP_REFERER'] = '/ask'
+		return HttpResponseRedirect('/login?redirect=' + str(request.META['HTTP_REFERER']))
 
 	return render(request, 'ask.html', context)
 

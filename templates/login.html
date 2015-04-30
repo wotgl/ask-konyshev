@@ -12,8 +12,12 @@
     </div>
 {% endif %}
 
-<form action="{% url 'login' %}?continue={{ continue }}" method="post" enctype="multipart/form-data">
+
+
+<form action="{% url 'login' %}?redirect={{ next }}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+	<input type="hidden" name="next" value="{{ next }}">
+
 	{% for field in form %}
 	    <div class="fieldWrapper">
 	        <div class="form-group">

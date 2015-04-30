@@ -7,9 +7,6 @@ from core.models import Question, Profile, Tag, Answer
 from django.contrib.auth.hashers import check_password
 
 
-
-
-
 class LoginForm(forms.Form):
 	username = forms.CharField(initial='', label='Username', max_length=100, 
 		widget=forms.TextInput (attrs={
@@ -94,16 +91,6 @@ class SignUpForm(forms.Form):
 			filename = '/default/' + new_username[0].lower() + '.png'		# Default avatar
         	Profile.objects.create(user=user, filename=filename)
         	return user
-
-
-def handleUploadedFile(f):
-	# Generate random name
-	new_filename = "%s.%s" % (User.objects.make_random_password(10), f.name.split('.')[-1])
-
-	filename = os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + new_filename
-	with open(filename, 'wb') as destination:
-		destination.write(f.read())
-	return new_filename
 
 
 class AskForm(forms.Form):
@@ -266,3 +253,12 @@ class ChangePasswordForm(forms.Form):
 
 		return user
 
+
+def handleUploadedFile(f):
+	# Generate random name
+	new_filename = "%s.%s" % (User.objects.make_random_password(10), f.name.split('.')[-1])
+
+	filename = os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + new_filename
+	with open(filename, 'wb') as destination:
+		destination.write(f.read())
+	return new_filename
