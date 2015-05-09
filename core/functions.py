@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404
+from django.http import Http404, HttpResponse
+
 
 
 # Help Functions
@@ -37,5 +38,3 @@ def checkURL(url):
 	if pattern in url:
 		return True
 	return False
-
-	

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.conf.urls import patterns, include, url
 
 from core.views import main, question, tag, signup, login_view, logout_view, base, ask, new_answer
-from core.views import settings, edit_profile, change_password, edit_photo, profile
+from core.views import settings, edit_profile, change_password, edit_photo, profile, like,  create_post
 
 #TODO:	add regular to username -> 1 word
 
@@ -25,6 +25,9 @@ urlpatterns = patterns('',
 	url(r'^change_password/', change_password, name='change_password'),
 	url(r'^edit_photo/', edit_photo, name='edit_photo'),
 	url(r'^profile/(?P<username>\w+)/$', profile, name='profile'),
+
+	url(r'^like/', like, name='like'),
+	url(r'^create_post/', create_post, name='create_post'),
 )
 
 

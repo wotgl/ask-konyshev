@@ -23,7 +23,6 @@ class LoginForm(forms.Form):
 class SignUpForm(forms.Form):
 
 	# Regular expressions:	first symbol is letter
-	# regex=r'^\D+[0-9a-zA-Z]+$'
 
 	username = forms.RegexField(initial='', regex=r'^\w+[0-9a-zA-Z]+$', label='Username', max_length=50, 
 		widget=forms.TextInput (attrs={
@@ -254,6 +253,7 @@ class ChangePasswordForm(forms.Form):
 		user.save()
 
 		return user
+
 
 
 def handleUploadedFile(f):
