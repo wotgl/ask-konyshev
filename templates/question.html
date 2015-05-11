@@ -22,28 +22,41 @@
 	    <div style="text-align: center;">
 	    	<form class="QLike">
 	    		<input type="hidden" name="question_id" value="{{ question.id }}">
+	    		<button type="submit" class="btn btn-default btn-xs Btn" id="QlikeBtn_{{ question.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
+		  			<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+				</button>
+				<button type="submit" class="btn btn-default btn-xs Btn" id="QdislikeBtn_{{ question.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
+		  			<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+		  		</button>
+
+	    		<!-- Likes here -->
+		  		<style type="text/css">
 	    		{% with Qlikes.pop as Qlike %}   
 		    		{% if Qlike == 1 %}
-						<button type="submit" class="btn btn-default btn-xs Btn" id="QlikeBtn_{{ question.id }}" name="like" class="btn btn-default btn-lg" style="border: none; color: green;">
-						  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-						</button>
-						<button type="submit" class="btn btn-default btn-xs Btn" id="QdislikeBtn_{{ question.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
-						  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+						#QlikeBtn_{{ question.id }} {
+							color: green;
+							}
+						#QdislikeBtn_{{ question.id }} {
+							color: initial;
+							}
 					{% elif Qlike == -1 %}
-						<button type="submit" class="btn btn-default btn-xs Btn" id="QlikeBtn_{{ question.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
-						  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-						</button>
-						<button type="submit" class="btn btn-default btn-xs Btn" id="QdislikeBtn_{{ question.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;color: red;">
-						  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-						</button>
+						#QlikeBtn_{{ question.id }} {
+							color: initial;
+							}
+						#QdislikeBtn_{{ question.id }} {
+							color: red;
+							}
 					{% else %}
-						<button type="submit" class="btn btn-default btn-xs Btn" id="QlikeBtn_{{ question.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
-						  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-						</button>
-						<button type="submit" class="btn btn-default btn-xs Btn" id="QdislikeBtn_{{ question.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
-						  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-				  	{% endif %}
-			  	{% endwith %}					  	
+						#QlikeBtn_{{ question.id }} {
+							color: initial;
+							}
+						#QdislikeBtn_{{ question.id }} {
+							color: initial;
+							}
+					{% endif %}
+			  	{% endwith %}	
+			  	</style>	
+			  	<!-- end of Likes -->
 	    	</form>
 	    </div>
 	</div>
@@ -107,7 +120,7 @@
 			border: 2px solid green;
 			border-bottom: 0px;
 			border-top: 0px;
-			}
+			};
 		</style>
 		{% endif %}
 		<div class="row answer" id="answer_{{ answer.id }}">
@@ -125,28 +138,42 @@
 			    <div style="text-align: center;">
 			    	<form class="ALike">
 			    		<input type="hidden" name="answer_id" value="{{ answer.id }}">
+
+						<button type="submit" class="btn btn-default btn-xs Btn" id="AlikeBtn_{{ answer.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
+						  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+						</button>
+						<button type="submit" class="btn btn-default btn-xs Btn" id="AdislikeBtn_{{ answer.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
+						  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+							
+					  	<!-- Likes here -->
+				  		<style type="text/css">
 			    		{% with likes.pop as like %}   
 				    		{% if like == 1 %}
-								<button type="submit" class="btn btn-default btn-xs Btn" id="AlikeBtn_{{ answer.id }}" name="like" class="btn btn-default btn-lg" style="border: none; color: green;">
-								  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-								</button>
-								<button type="submit" class="btn btn-default btn-xs Btn" id="AdislikeBtn_{{ answer.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
-								  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+								#AlikeBtn_{{ answer.id }} {
+									color: green;
+									}
+								#AdislikeBtn_{{ answer.id }} {
+									color: initial;
+									}
 							{% elif like == -1 %}
-								<button type="submit" class="btn btn-default btn-xs Btn" id="AlikeBtn_{{ answer.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
-								  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-								</button>
-								<button type="submit" class="btn btn-default btn-xs Btn" id="AdislikeBtn_{{ answer.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;color: red;">
-								  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-								</button>
+								#AlikeBtn_{{ answer.id }} {
+									color: initial;
+									}
+								#AdislikeBtn_{{ answer.id }} {
+									color: red;
+									};
 							{% else %}
-								<button type="submit" class="btn btn-default btn-xs Btn" id="AlikeBtn_{{ answer.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
-								  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-								</button>
-								<button type="submit" class="btn btn-default btn-xs Btn" id="AdislikeBtn_{{ answer.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
-								  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-						  	{% endif %}
-					  	{% endwith %}					  	
+								#AlikeBtn_{{ answer.id }} {
+									color: initial;
+									}
+								#AdislikeBtn_{{ answer.id }} {
+									color: initial;
+									}
+							{% endif %}
+					  	{% endwith %}	
+					  	</style>	
+					  	<!-- end of Likes -->
+
 			    	</form>
 			    </div>
 			</div>
