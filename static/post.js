@@ -1,33 +1,54 @@
 window.onload = function() {
 
-    var buttonpressed;
-    var buttonID;
-    $('.Btn').click(function() {
-        buttonpressed = $(this).attr('name')
-        buttonID = $(this).attr('id')
-        console.log(buttonID)
+    $("[id*=QlikeBtn_]").click(function() {
+        button_id = $(this).attr('id');
+        send(button_id, 'like');
+
+        return false;
     })
 
-    $('.QLike').on('submit', function(event){
-        event.preventDefault();
-        // console.log('button clicked was ' + buttonpressed)
-        form = $(this).serialize();
-        send(form, buttonpressed);
-        buttonpressed=''
-    });
+    $("[id*=QdislikeBtn_]").click(function() {
+        button_id = $(this).attr('id');
+        send(button_id, 'dislike');
 
-    $('.ALike').on('submit', function(event){
-        event.preventDefault();
-        // console.log('button clicked was ' + buttonpressed)
-        form = $(this).serialize();
-        send(form, buttonpressed);
-        buttonpressed=''
-    });
+        return false;
+    })
 
-    function send(form, buttonpressed) {
+    $("[id*=AlikeBtn_]").click(function() {
+        button_id = $(this).attr('id');
+        send(button_id, 'like');
+
+        return false;
+    })
+
+    $("[id*=AdislikeBtn_]").click(function() {
+        button_id = $(this).attr('id');
+        send(button_id, 'dislike');
+
+        return false;
+    })
+
+    // $("[id*=dislikeBtn_]").click(function() {
+    //     button_id = $(this).attr('id');
+    //     console.log(button_id)
+    //     send(button_id, 'dislike');
+
+    //     return false;
+    // })
+    // $("[id*=likeBtn_]").click(function() {
+    //     button_id = $(this).attr('id');
+    //     console.log(button_id)
+    //     send(button_id, 'like');
+
+    //     return false;
+    // })
+
+    
+
+    function send(button_id, state) {
         data = {};
-        data['form'] = form;
-        data['buttonpressed'] = buttonpressed;
+        data['button'] = button_id;
+        data['state'] = state;
         $.ajax({
             url : "/like/", // the endpoint
             type : "POST", // http method
@@ -35,22 +56,25 @@ window.onload = function() {
 
             // handle a successful response
             success : function(json) {
-                if (json == '403' || json == 'error') {
+                if (json == '403' || json == 'error' || json == 'value exist') {
                     return false;
                 } 
                 console.log(json); // log the returned json to the console
-                id = form.split('=')[1].toString();
 
-                rating_id = buttonID[0] + 'rating_' + id;
-                console.log(rating_id);
+                rating_id = button_id[0] + 'rating_' + button_id.split('_')[1];
+                // console.log(rating_id);
                 $('#' + rating_id).text(json);
 
-                if (buttonpressed == 'like') {
-                    document.getElementById(buttonID).style.color = "green";
-                    document.getElementById(buttonID[0] + "dis" + buttonID.slice(1, buttonID.length)).style.color = "initial";
-                } else if (buttonpressed == 'dislike') {
-                    document.getElementById(buttonID[0] + buttonID.slice(4, buttonID.length)).style.color = "initial";
-                    document.getElementById(buttonID).style.color = "red";
+                if (state == 'like') {
+                    document.getElementById(button_id).style.color = "green";
+                    document.getElementById(button_id).setAttribute("disabled", "true");
+                    document.getElementById(button_id[0] + "dis" + button_id.slice(1, button_id.length)).style.color = "initial";
+                    document.getElementById(button_id[0] + "dis" + button_id.slice(1, button_id.length)).setAttribute("disabled", "true");
+                } else if (state == 'dislike') {
+                    document.getElementById(button_id[0] + button_id.slice(4, button_id.length)).style.color = "initial";
+                    document.getElementById(button_id[0] + button_id.slice(4, button_id.length)).setAttribute("disabled", "true");
+                    document.getElementById(button_id).style.color = "red";
+                    document.getElementById(button_id).setAttribute("disabled", "true");
                 }
             }
         });

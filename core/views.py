@@ -312,11 +312,12 @@ def like(request):
             return JsonResp('403')
 
         user = request.user
-        state = request.POST.get('buttonpressed')
-        form = request.POST.get('form')
-        print form
+        state = request.POST.get('state')
+        button = request.POST.get('button')
+        print button
 
-        likeType = form.split('=')[0];
+        likeType = button.split('_')[0];
+        print likeType
 
          # Parse value
         if state == 'like':
@@ -328,8 +329,8 @@ def like(request):
 
 
         # Here code for question/answer
-        if likeType == 'question_id':
-            question_id = form.split('=')[1]    # Get id
+        if likeType == 'QlikeBtn' or likeType == 'QdislikeBtn':
+            question_id = button.split('_')[1]    # Get id
 
             try:
                 question = Question.objects.get(id=question_id)
@@ -339,23 +340,26 @@ def like(request):
             try:
                 state = question.likes.get(author=user)
                 exist = True
+                return JsonResp('value exist')
             except QLike.DoesNotExist, e:
                 exist = False
 
-            if exist:
-                question.rating = question.rating - state.value
-                state.value = value
-                state.save()
-            else:
+            # if exist:
+            #     question.rating = question.rating - state.value
+            #     state.value = value
+            #     state.save()
+            # else:
+            #     question.likes.add(QLike.objects.create(author=user, value=value))
+
+            if not exist:
                 question.likes.add(QLike.objects.create(author=user, value=value))
-            
-            question.rating = question.rating + value
-            question.save()
+                question.rating = question.rating + value
+                question.save()
 
             return JsonResp(question.rating)
-        elif likeType == 'answer_id':
-            answer_id = form.split('=')[1]    # Get id
-            print answer_id
+        elif likeType == 'AlikeBtn' or likeType == 'AdislikeBtn':
+            answer_id = button.split('_')[1]    # Get id
+
             try:
                 answer = Answer.objects.get(id=answer_id)
             except Answer.DoesNotExist, e:
@@ -364,23 +368,26 @@ def like(request):
             try:
                 state = answer.likes.get(author=user)
                 exist = True
+                return JsonResp('value exist')
             except ALike.DoesNotExist, e:
                 exist = False
-                
-            if exist:
-                answer.rating = answer.rating - state.value
-                state.value = value
-                state.save()
-            else:
-                answer.likes.add(ALike.objects.create(author=user, value=value))
-            
-            answer.rating = answer.rating + value
-            answer.save()
 
+            
+            # if exist:
+            #     answer.rating = answer.rating - state.value
+            #     state.value = value
+            #     state.save()
+            # else:
+            #     answer.likes.add(ALike.objects.create(author=user, value=value))
+
+            if not exist:
+                answer.likes.add(ALike.objects.create(author=user, value=value))
+                answer.rating = answer.rating + value
+                answer.save()
+            
             return JsonResp(answer.rating)
         else:
             return JsonResp('error')
-            # Error
     else:
         raise Http404
 

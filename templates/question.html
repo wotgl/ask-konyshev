@@ -30,32 +30,48 @@
 		  		</button>
 
 	    		<!-- Likes here -->
-		  		<style type="text/css">
+		  		<script type="text/javascript">
+					$('#QlikeBtn_{{ question.id }}').prop('disabled', true);
+					$('#QdislikeBtn_{{ question.id }}').prop('disabled', true);
+				</script>
+
 	    		{% with Qlikes.pop as Qlike %}   
 		    		{% if Qlike == 1 %}
+		    		<style type="text/css">
 						#QlikeBtn_{{ question.id }} {
 							color: green;
 							}
 						#QdislikeBtn_{{ question.id }} {
 							color: initial;
 							}
+					</style>
 					{% elif Qlike == -1 %}
+					<style type="text/css">
 						#QlikeBtn_{{ question.id }} {
 							color: initial;
 							}
 						#QdislikeBtn_{{ question.id }} {
 							color: red;
 							}
+					</style>
 					{% else %}
+					<style type="text/css">
 						#QlikeBtn_{{ question.id }} {
 							color: initial;
 							}
 						#QdislikeBtn_{{ question.id }} {
 							color: initial;
 							}
+					</style>
+						{% if user.is_authenticated %}	
+					  		<script type="text/javascript">
+								$('#QlikeBtn_{{ question.id }}').prop('disabled', false);
+								$('#QdislikeBtn_{{ question.id }}').prop('disabled', false);
+							</script>
+						{% endif %}
 					{% endif %}
 			  	{% endwith %}	
-			  	</style>	
+			  		
 			  	<!-- end of Likes -->
 	    	</form>
 	    </div>
@@ -146,32 +162,47 @@
 						  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
 							
 					  	<!-- Likes here -->
-				  		<style type="text/css">
+				  		<script type="text/javascript">
+							$('#AlikeBtn_{{ answer.id }}').prop('disabled', true);
+							$('#AdislikeBtn_{{ answer.id }}').prop('disabled', true);
+						</script>
 			    		{% with likes.pop as like %}   
 				    		{% if like == 1 %}
+				    		<style type="text/css">
 								#AlikeBtn_{{ answer.id }} {
 									color: green;
 									}
 								#AdislikeBtn_{{ answer.id }} {
 									color: initial;
 									}
+							</style>
 							{% elif like == -1 %}
+							<style type="text/css">
 								#AlikeBtn_{{ answer.id }} {
 									color: initial;
 									}
 								#AdislikeBtn_{{ answer.id }} {
 									color: red;
 									};
+							</style>
 							{% else %}
+							<style type="text/css">
 								#AlikeBtn_{{ answer.id }} {
 									color: initial;
 									}
 								#AdislikeBtn_{{ answer.id }} {
 									color: initial;
 									}
+							</style>
+								{% if user.is_authenticated %}	
+							  		<script type="text/javascript">
+										$('#AlikeBtn_{{ answer.id }}').prop('disabled', false);
+										$('#AdislikeBtn_{{ answer.id }}').prop('disabled', false);
+									</script>
+								{% endif %}
 							{% endif %}
 					  	{% endwith %}	
-					  	</style>	
+					  		
 					  	<!-- end of Likes -->
 
 			    	</form>

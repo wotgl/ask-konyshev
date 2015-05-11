@@ -5,12 +5,6 @@
 
 {% block content_header %}
 <h3>Top Questions</h3>
-<form method="POST" id="post-form">
-	{% csrf_token %}
-    <input id="post-text">
-    <div id="results"></div> <!-- errors go here -->
-    <input type="submit" value="Post" class="tiny button">
-</form>
 {% endblock %}
 
 {% block content %}
@@ -48,32 +42,48 @@
 				  		</button>
 
 				  		<!-- Likes here -->
-				  		<style type="text/css">
+				  		<script type="text/javascript">
+							$('#QlikeBtn_{{ question.id }}').prop('disabled', true);
+							$('#QdislikeBtn_{{ question.id }}').prop('disabled', true);
+						</script>
+
 			    		{% with likes.pop as like %}   
 				    		{% if like == 1 %}
+				    		<style type="text/css">
 								#QlikeBtn_{{ question.id }} {
 									color: green;
 									}
 								#QdislikeBtn_{{ question.id }} {
 									color: initial;
 									}
+							</style>
 							{% elif like == -1 %}
+							<style type="text/css">
 								#QlikeBtn_{{ question.id }} {
 									color: initial;
 									}
 								#QdislikeBtn_{{ question.id }} {
 									color: red;
 									}
+							</style>	
 							{% else %}
+							<style type="text/css">
 								#QlikeBtn_{{ question.id }} {
 									color: initial;
 									}
 								#QdislikeBtn_{{ question.id }} {
 									color: initial;
 									}
+							</style>
+								{% if user.is_authenticated %}	
+							  		<script type="text/javascript">
+										$('#QlikeBtn_{{ question.id }}').prop('disabled', false);
+										$('#QdislikeBtn_{{ question.id }}').prop('disabled', false);
+									</script>
+								{% endif %}
 							{% endif %}
 					  	{% endwith %}	
-					  	</style>	
+					  	
 					  	<!-- end of Likes -->
 			    	</form>
 			    </div>
