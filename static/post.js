@@ -40,9 +40,18 @@ window.onload = function() {
             // handle a successful response
             success : function(json) {
                 console.log(json); // log the returned json to the console
-                rating_id = 'rating_' + form.split('=')[1].toString();
+                id = form.split('=')[1].toString();
+                rating_id = 'rating_' + id;
                 console.log(rating_id)
                 $('#' + rating_id).text(json);
+
+                if (buttonpressed == 'like') {
+                    document.getElementById("likeBtn_" + id).style.color = "green";
+                    document.getElementById("dislikeBtn_" + id).style.color = "initial";
+                } else if (buttonpressed == 'dislike') {
+                    document.getElementById("likeBtn_" + id).style.color = "initial";
+                    document.getElementById("dislikeBtn_" + id).style.color = "red";
+                }
             }
         });
     }

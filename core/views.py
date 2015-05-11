@@ -32,7 +32,18 @@ def main(request):
     # Create Paginator
     question_list = pagination(request, question_list, N)
 
-    context = {'question_list': question_list}
+    likes = []
+    for question in reversed(question_list):
+        try:
+            like = question.likes.get(author=request.user)
+            if like.value == 1:
+                likes.append(1)
+            else:
+                likes.append(-1)
+        except QLike.DoesNotExist, e:
+            likes.append(0)
+
+    context = {'question_list': question_list, 'likes': likes}
     return render(request, html, context)
 
 
