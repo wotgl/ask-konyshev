@@ -1,32 +1,28 @@
 window.onload = function() {
-    $('#post-form').on('submit', function(event){
-        event.preventDefault();
-        console.log("form submitted!")  // sanity check
-        create_post();
-    });
-
-    // $('.QLike').on('submit', function(event){
-    //     event.preventDefault();
-    //     console.log("form submitted!")  // sanity check
-    //     //create_post();
-
-    // });
 
     var buttonpressed;
-    $('.QBtn').click(function() {
+    var buttonID;
+    $('.Btn').click(function() {
         buttonpressed = $(this).attr('name')
+        buttonID = $(this).attr('id')
+        console.log(buttonID)
     })
 
     $('.QLike').on('submit', function(event){
         event.preventDefault();
-        console.log('button clicked was ' + buttonpressed)
+        // console.log('button clicked was ' + buttonpressed)
         form = $(this).serialize();
-
         send(form, buttonpressed);
-
         buttonpressed=''
     });
 
+    $('.ALike').on('submit', function(event){
+        event.preventDefault();
+        // console.log('button clicked was ' + buttonpressed)
+        form = $(this).serialize();
+        send(form, buttonpressed);
+        buttonpressed=''
+    });
 
     function send(form, buttonpressed) {
         data = {};
@@ -39,19 +35,51 @@ window.onload = function() {
 
             // handle a successful response
             success : function(json) {
+                if (json == '403' || json == 'error') {
+                    return false;
+                } 
                 console.log(json); // log the returned json to the console
                 id = form.split('=')[1].toString();
-                rating_id = 'rating_' + id;
-                console.log(rating_id)
+
+                rating_id = buttonID[0] + 'rating_' + id;
+                console.log(rating_id);
                 $('#' + rating_id).text(json);
 
                 if (buttonpressed == 'like') {
-                    document.getElementById("likeBtn_" + id).style.color = "green";
-                    document.getElementById("dislikeBtn_" + id).style.color = "initial";
+                    document.getElementById(buttonID).style.color = "green";
+                    document.getElementById(buttonID[0] + "dis" + buttonID.slice(1, buttonID.length)).style.color = "initial";
                 } else if (buttonpressed == 'dislike') {
-                    document.getElementById("likeBtn_" + id).style.color = "initial";
-                    document.getElementById("dislikeBtn_" + id).style.color = "red";
+                    document.getElementById(buttonID[0] + buttonID.slice(4, buttonID.length)).style.color = "initial";
+                    document.getElementById(buttonID).style.color = "red";
                 }
+            }
+        });
+    }
+
+    $("[id*=correct_]").click(function() {
+        correct_id = $(this).attr('id');
+        console.log(correct_id);
+        // $(".correct_answer").remove();
+
+        correct_send(correct_id);
+    })
+
+    function correct_send(correct_id) {
+        // data['correct_id'] = correct_id;
+        $.ajax({
+            url : "/correct_answer/", // the endpoint
+            type : "POST", // http method
+            data: {'correct_id': correct_id},
+
+            // handle a successful response
+            success : function(json) {
+                console.log(json);
+                answer_id = "answer_" + correct_id.split('_')[1];
+                console.log(answer_id);
+                $(".correct_answer").remove();
+                document.getElementById(answer_id).style.border = "2px solid green";
+                document.getElementById(answer_id).style.borderBottom = "0px";
+                document.getElementById(answer_id).style.borderTop = "0px";
             }
         });
     }
@@ -82,26 +110,4 @@ window.onload = function() {
          } 
     });
 
-    function create_post() {
-        console.log("create post is working!") // sanity check
-        $.ajax({
-            url : "create_post/", // the endpoint
-            type : "POST", // http method
-            data : { the_post : $('#post-text').val() }, // data sent with the post request
-
-            // handle a successful response
-            success : function(json) {
-                $('#post-text').val(''); // remove the value from the input
-                console.log(json); // log the returned json to the console
-                console.log("success"); // another sanity check
-            },
-
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-    };
 }

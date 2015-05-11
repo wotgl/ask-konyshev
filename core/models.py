@@ -34,6 +34,7 @@ class Question(models.Model):
     rating = models.IntegerField(db_index=True, default=0)
     tags = models.ManyToManyField(Tag)
     likes = models.ManyToManyField(QLike)
+    correct_answer = models.IntegerField(default=0)
 
     def __unicode__(self):
         return str(self.title)

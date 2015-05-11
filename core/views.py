@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from core.functions import pagination, nameParser, checkURL
+from core.functions import pagination, nameParser, checkURL, collectLikes
 from django.db import IntegrityError
 from django.core.validators import validate_email, ValidationError
 from django.contrib.auth.hashers import check_password
@@ -31,21 +31,12 @@ def main(request):
 
     # Create Paginator
     question_list = pagination(request, question_list, N)
+    context = {'question_list': question_list}
 
-    likes = []
-    for question in reversed(question_list):
-        try:
-            like = question.likes.get(author=request.user)
-            if like.value == 1:
-                likes.append(1)
-            else:
-                likes.append(-1)
-        except QLike.DoesNotExist, e:
-            likes.append(0)
+    # Likes here
+    context['likes'] = collectLikes(request, question_list)
 
-    context = {'question_list': question_list, 'likes': likes}
     return render(request, html, context)
-
 
 # check nubmer of question
 def question(request, question_id):
@@ -60,9 +51,15 @@ def question(request, question_id):
 
     # Create Paginator
     answer_list = pagination(request, answer_list, number_of_answers)
-    
-    context = {'question': question, 'answer_list': answer_list}
 
+    context = {'question': question, 'answer_list': answer_list}
+    context['likes'] = collectLikes(request, answer_list)
+    context['Qlikes'] = collectLikes(request, [question])
+
+    if question.author == request.user:
+        context['author'] = True
+    else:
+        context['author'] = False
     
     '''
     Get AnswerForm
@@ -312,14 +309,16 @@ def profile(request, username):
 def like(request):
     if request.method == 'POST':
         if not request.user.is_authenticated():
-            return JsonResp('User is not authorized')
+            return JsonResp('403')
 
         user = request.user
         state = request.POST.get('buttonpressed')
         form = request.POST.get('form')
-        question_id = form.split('=')[1]    # Get id
+        print form
 
-        # Parse value
+        likeType = form.split('=')[0];
+
+         # Parse value
         if state == 'like':
             value = 1
         elif state == 'dislike':
@@ -327,61 +326,93 @@ def like(request):
         else:
             return JsonResp('error')
 
-        try:
-            question = Question.objects.get(id=question_id)
-        except Question.DoesNotExist, e:
-            return JsonResp('error')
 
-        try:
-            state = question.likes.get(author=user)
-            exist = True
-        except QLike.DoesNotExist, e:
-            exist = False
+        # Here code for question/answer
+        if likeType == 'question_id':
+            question_id = form.split('=')[1]    # Get id
 
-        if exist:
-            question.rating = question.rating - state.value
-            state.value = value
-            state.save()
+            try:
+                question = Question.objects.get(id=question_id)
+            except Question.DoesNotExist, e:
+                return JsonResp('error')
+
+            try:
+                state = question.likes.get(author=user)
+                exist = True
+            except QLike.DoesNotExist, e:
+                exist = False
+
+            if exist:
+                question.rating = question.rating - state.value
+                state.value = value
+                state.save()
+            else:
+                question.likes.add(QLike.objects.create(author=user, value=value))
+            
+            question.rating = question.rating + value
+            question.save()
+
+            return JsonResp(question.rating)
+        elif likeType == 'answer_id':
+            answer_id = form.split('=')[1]    # Get id
+            print answer_id
+            try:
+                answer = Answer.objects.get(id=answer_id)
+            except Answer.DoesNotExist, e:
+                return JsonResp('error')
+
+            try:
+                state = answer.likes.get(author=user)
+                exist = True
+            except ALike.DoesNotExist, e:
+                exist = False
+                
+            if exist:
+                answer.rating = answer.rating - state.value
+                state.value = value
+                state.save()
+            else:
+                answer.likes.add(ALike.objects.create(author=user, value=value))
+            
+            answer.rating = answer.rating + value
+            answer.save()
+
+            return JsonResp(answer.rating)
         else:
-            question.likes.add(QLike.objects.create(author=user, value=value))
-        
-        question.rating = question.rating + value
-        question.save()
-
-
-        return JsonResp(question.rating)
-
+            return JsonResp('error')
+            # Error
     else:
         raise Http404
+
+def correct_answer(request):  
+    if request.method == 'POST':
+        if not request.user.is_authenticated():
+            return JsonResp('403')
+
+        user = request.user
+        data = request.POST.get('correct_id')
+        correct_id = data.split('_')[1];
+
+        try:
+            answer = Answer.objects.get(id=correct_id)
+            question = answer.question
+        except Answer.DoesNotExist, e:
+            return JsonResp('error')
+
+        if question.author == user and question.correct_answer == 0:
+            question.correct_answer = correct_id
+            answer.correct_answer = True
+            question.save()
+            answer.save()
+            return JsonResp('OK')
+
+        return JsonResp('value exist')
+    else:
+        raise Http404
+
 
 def JsonResp(answer):
     return HttpResponse(
         json.dumps(answer),
         content_type="application/json"
     )
-
-
-
-def create_post(request):
-    if request.method == 'POST':
-        post_text = request.POST.get('the_post')
-        question_id = request.POST.get('question_id')
-        # request_csrf_token = request.META.get('HTTP_X_CSRFTOKEN', '')
-        print question_id
-        response_data = {}
-
-        # post = Post(text=post_text, author=request.user)
-        # post.save()
-
-        response_data['result'] = 'Create post successful!'
-        # response_data['postpk'] = post.pk
-        # response_data['text'] = post.text
-        # response_data['created'] = post.created.strftime('%B %d, %Y %I:%M %p')
-        # response_data['author'] = post.author.username
-
-        return HttpResponse(
-            json.dumps(response_data),
-            content_type="application/json"
-        )
-    else:
-        raise Http404 
