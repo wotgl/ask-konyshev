@@ -92,7 +92,6 @@ def new_answer(request):
                 question = Question.objects.get(id=question_id)
 
                 answer = Answer.objects.create(text=text, author=author, question=question)
- 
 
                 # Check 'next page'
                 # if new answer go to new page => page_id++
