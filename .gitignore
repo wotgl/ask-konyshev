@@ -5,5 +5,8 @@
 *.gif
 *.gitignore
 
+settings.py
+settings.pyc
+
 static/bootstrap-3.3.4/*
 core/migrations/*

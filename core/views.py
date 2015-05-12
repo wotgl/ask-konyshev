@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from core.functions import pagination, nameParser, checkURL, collectLikes
+from core.functions import pagination, nameParser, checkURL, collectLikes, sendMail
 from django.db import IntegrityError
 from django.core.validators import validate_email, ValidationError
 from django.contrib.auth.hashers import check_password
@@ -101,6 +101,8 @@ def new_answer(request):
                     page_id = int(page_id)
                     page_id = page_id + 1
 
+                helpLink = 'http://127.0.0.1/question/' + str(question_id) + '?page=' + str(page_id) + '#' + str(answer.id)
+                sendMail(question.author.email, question, answer, helpLink)
                 # Redirect to answer
                 return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": question_id}) 
                     + "?page=" + str(page_id) + "#" + str(answer.id))
