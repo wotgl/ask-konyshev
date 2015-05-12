@@ -121,10 +121,11 @@ class AskForm(forms.Form):
 		author = User.objects.get(username=author_username)
 		question = Question.objects.create(title=new_title, text=new_text, author=author)
 
-		tag_list = new_tags.split(' ')
-		for tag in tag_list:
-			t = Tag.objects.get_or_create(name=tag)
-			question.tags.add(t[0])
+		if len(new_tags) != 0:
+			tag_list = new_tags.split(' ')
+			for tag in tag_list:
+				t = Tag.objects.get_or_create(name=tag)
+				question.tags.add(t[0])
 
 		return question
 

@@ -16,6 +16,7 @@ window.onload = function() {
 
     $("[id*=AlikeBtn_]").click(function() {
         button_id = $(this).attr('id');
+        console.log('AlikeBtn_');
         send(button_id, 'like');
 
         return false;
@@ -23,6 +24,7 @@ window.onload = function() {
 
     $("[id*=AdislikeBtn_]").click(function() {
         button_id = $(this).attr('id');
+        console.log('AdislikeBtn_');
         send(button_id, 'dislike');
 
         return false;
@@ -97,6 +99,9 @@ window.onload = function() {
 
             // handle a successful response
             success : function(json) {
+                if (json == '403' || json == 'error' || json == 'value exist') {
+                    return false;
+                } 
                 console.log(json);
                 answer_id = "answer_" + correct_id.split('_')[1];
                 console.log(answer_id);

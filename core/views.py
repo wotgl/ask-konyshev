@@ -344,13 +344,22 @@ def like(request):
             except QLike.DoesNotExist, e:
                 exist = False
 
+            # Many tap likes
             # if exist:
-            #     question.rating = question.rating - state.value
             #     state.value = value
             #     state.save()
             # else:
             #     question.likes.add(QLike.objects.create(author=user, value=value))
 
+            # likes = question.likes.all()
+            # rating = 0
+            # for like in likes:
+            #     rating = rating + like.value
+
+            # question.rating = rating
+            # question.save()
+
+            # One tap likes
             if not exist:
                 question.likes.add(QLike.objects.create(author=user, value=value))
                 question.rating = question.rating + value
@@ -372,14 +381,22 @@ def like(request):
             except ALike.DoesNotExist, e:
                 exist = False
 
-            
+            # Many tap likes
             # if exist:
-            #     answer.rating = answer.rating - state.value
             #     state.value = value
             #     state.save()
             # else:
             #     answer.likes.add(ALike.objects.create(author=user, value=value))
 
+            # likes = answer.likes.all()
+            # rating = 0
+            # for like in likes:
+            #     rating = rating + like.value
+
+            # answer.rating = rating
+            # answer.save()
+
+            # One tap likes
             if not exist:
                 answer.likes.add(ALike.objects.create(author=user, value=value))
                 answer.rating = answer.rating + value
@@ -406,14 +423,17 @@ def correct_answer(request):
         except Answer.DoesNotExist, e:
             return JsonResp('error')
 
-        if question.author == user and question.correct_answer == 0:
-            question.correct_answer = correct_id
-            answer.correct_answer = True
-            question.save()
-            answer.save()
-            return JsonResp('OK')
-
-        return JsonResp('value exist')
+        if question.author == user:
+            if question.correct_answer == 0:
+                question.correct_answer = correct_id
+                answer.correct_answer = True
+                question.save()
+                answer.save()
+                return JsonResp('OK')
+            else:
+                return JsonResp('value exist')
+        else:
+            return JsonResp('403')
     else:
         raise Http404
 
