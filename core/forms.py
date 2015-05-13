@@ -198,6 +198,8 @@ class EditPhotoForm(forms.Form):
 
 		user = User.objects.get(username=self.request.user)
 
+		os.remove(os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + str(user.profile.filename))
+
 		user.profile.filename = name_pic
 		user.save()
 		user.profile.save()

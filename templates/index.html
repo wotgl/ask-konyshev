@@ -43,8 +43,8 @@
 
 				  		<!-- Likes here -->
 				  		<script type="text/javascript">
-							$('#QlikeBtn_{{ question.id }}').prop('disabled', true);
-							$('#QdislikeBtn_{{ question.id }}').prop('disabled', true);
+							$('#QlikeBtn_{{ question.id }}').prop('disabled', false);
+							$('#QdislikeBtn_{{ question.id }}').prop('disabled', false);
 						</script>
 
 			    		{% with likes.pop as like %}   
@@ -75,13 +75,15 @@
 									color: initial;
 									}
 							</style>
-								{% if user.is_authenticated %}	
-							  		<script type="text/javascript">
-										$('#QlikeBtn_{{ question.id }}').prop('disabled', false);
-										$('#QdislikeBtn_{{ question.id }}').prop('disabled', false);
-									</script>
-								{% endif %}
 							{% endif %}
+							
+							{% if not user.is_authenticated %}	
+						  		<script type="text/javascript">
+									$('#QlikeBtn_{{ question.id }}').prop('disabled', true);
+									$('#QdislikeBtn_{{ question.id }}').prop('disabled', true);
+								</script>
+							{% endif %}
+							
 					  	{% endwith %}	
 					  	
 					  	<!-- end of Likes -->

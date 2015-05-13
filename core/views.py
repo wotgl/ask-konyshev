@@ -15,6 +15,8 @@ from django.core.validators import validate_email, ValidationError
 from django.contrib.auth.hashers import check_password
 import json
 from django.template.context_processors import csrf
+from django.views.decorators.http import require_http_methods, require_POST
+from django.contrib.auth.decorators import login_required
 
 N = 10  # Number of questions on page
 number_of_answers = 10   # Number of answers on question page
@@ -75,40 +77,39 @@ def question(request, question_id):
     return render(request, 'question.html', context)
 
 
+@require_POST
+@login_required(login_url='/login/')
 def new_answer(request):
     context = {}
 
-    if request.user.is_authenticated():
-        if request.method == "POST":
-            form = AnswerForm(request.POST or None)
+    # if request.user.is_authenticated():
+    form = AnswerForm(request.POST or None)
 
-            if form.is_valid():
-                text = form.cleaned_data['text']
-                page_id = request.POST.get('page_id')
-                question_id = request.POST.get('question_id')
-                count = request.POST.get('count')
+    if form.is_valid():
+        text = form.cleaned_data['text']
+        page_id = request.POST.get('page_id')
+        question_id = request.POST.get('question_id')
+        count = request.POST.get('count')
 
-                author = User.objects.get(username=request.user)
-                question = Question.objects.get(id=question_id)
+        author = User.objects.get(username=request.user)
+        question = Question.objects.get(id=question_id)
 
-                answer = Answer.objects.create(text=text, author=author, question=question)
+        answer = Answer.objects.create(text=text, author=author, question=question)
 
-                # Check 'next page'
-                # if new answer go to new page => page_id++
-                count = int(count)
-                if count % number_of_answers == 0 and not count == 0:
-                    page_id = int(page_id)
-                    page_id = page_id + 1
+        # Check 'next page'
+        # if new answer go to new page => page_id++
+        count = int(count)
+        if count % number_of_answers == 0 and not count == 0:
+            page_id = int(page_id)
+            page_id = page_id + 1
 
-                helpLink = 'http://127.0.0.1/question/' + str(question_id) + '?page=' + str(page_id) + '#' + str(answer.id)
-                sendMail(question.author.email, question, answer, helpLink)
-                # Redirect to answer
-                return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": question_id}) 
-                    + "?page=" + str(page_id) + "#" + str(answer.id))
-            else:
-                return HttpResponseRedirect(reverse("question", kwargs={"question_id": request.POST.get('question_id')}))
-
-    return HttpResponseRedirect(reverse('question', kwargs={"question_id": request.POST.get('question_id')}))
+        # helpLink = 'http://127.0.0.1/question/' + str(question_id) + '?page=' + str(page_id) + '#' + str(answer.id)
+        # sendMail(question.author.email, question, answer, helpLink)
+        # Redirect to answer
+        return HttpResponsePermanentRedirect(reverse("question", kwargs={"question_id": question_id}) 
+            + "?page=" + str(page_id) + "#" + str(answer.id))
+    else:
+        return HttpResponseRedirect(reverse("question", kwargs={"question_id": request.POST.get('question_id')}))
 
 
 def tag(request, tag_name): 
@@ -123,6 +124,7 @@ def tag(request, tag_name):
     question_list = pagination(request, question_list, N)
 
     context = {'question_list': question_list, 'tag_name': tag_name}
+    context['likes'] = collectLikes(request, question_list)
     return render(request, 'tag.html', context)
 
 
@@ -167,7 +169,7 @@ def login_view(request):
                 if user is not None:
                     if user.is_active:      # may be banned?
                         login(request, user)
-                        url = request.GET.get('redirect')               # Back where you came from
+                        url = request.POST.get('next')
 
                         return HttpResponseRedirect(url)        # 302 Redirect
                     else:
@@ -179,21 +181,11 @@ def login_view(request):
                     context['message'] = {'message': 'Unable to login'}
 
         if request.method == 'GET':
-            '''
-                If user has true redirect e.g. /ask; /profile/<id>;
-                    set context['next'] = redirect;
-                else 
-                    get HTTP_REFERER
-            '''
-            if not request.GET.get('redirect'):
-                # Try get HTTP_REFERER
-                try:
-                    context['next'] = request.META['HTTP_REFERER']
-                except Exception, e:
-                    context['next'] = '/'   
+            url = request.GET.get('next')
+            if url:
+                context['next'] = url
             else:
-                context['next'] = request.GET.get('redirect')
-
+                context['next'] = request.META['HTTP_REFERER']
 
         return render(request, 'login.html', context)
     else:
@@ -209,38 +201,29 @@ def base(request):
     return render(request, 'base.html')
 
 
+@login_required(login_url='/login/')
 def ask(request):
     context = {'form': AskForm}
-    if request.user.is_authenticated():
-        if request.method == "POST":
-            form = AskForm(request.POST or None)
+    if request.method == "POST":
+        form = AskForm(request.POST or None)
 
-            if form.is_valid():
-                question = form.save(request.user)
-
-                return HttpResponseRedirect('/question/' + str(question.id))
-            context['form'] = form
-    else:
-        # add redirect to /ask after login
-        request.META['HTTP_REFERER'] = '/ask'
-        return HttpResponseRedirect('/login?redirect=' + str(request.META['HTTP_REFERER']))
+        if form.is_valid():
+            question = form.save(request.user)
+            return HttpResponseRedirect('/question/' + str(question.id))
+        context['form'] = form
 
     return render(request, 'ask.html', context)
 
 
+@login_required(login_url='/login/')
 def settings(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("index"))
-
     context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
     return render(request, 'settings.html', context)
 
 
+@login_required(login_url='/login/')
 def edit_profile(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("index"))
-
     context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
     if request.method == "POST":
@@ -255,11 +238,9 @@ def edit_profile(request):
 
     return HttpResponseRedirect(reverse('settings'))
             
-            
-def change_password(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("index"))
 
+@login_required(login_url='/login/')         
+def change_password(request):
     context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
     if request.method == "POST":
@@ -275,12 +256,10 @@ def change_password(request):
         return render(request, 'settings.html', context)    
 
     return HttpResponseRedirect(reverse('settings'))
-    
-        
-def edit_photo(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("index"))
 
+
+@login_required(login_url='/login/')  
+def edit_photo(request):
     context = {'form_edit': EditProfileForm, 'form_photo': EditPhotoForm, 'form_password': ChangePasswordForm}
 
     if request.method == "POST":
@@ -292,12 +271,10 @@ def edit_photo(request):
         return render(request, 'settings.html', context)
 
     return HttpResponseRedirect(reverse('settings'))
-            
 
+
+@login_required(login_url='/login/')
 def profile(request, username):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('login'))
-
     try:
         user_profile = User.objects.get(username=username)
     except User.DoesNotExist, e:
@@ -307,136 +284,125 @@ def profile(request, username):
     return render(request, 'profile.html', context)
 
 
+@login_required
+@require_POST
 def like(request):
-    if request.method == 'POST':
-        if not request.user.is_authenticated():
-            return JsonResp('403')
+    state = request.POST.get('state')
+    button = request.POST.get('button')
 
-        user = request.user
-        state = request.POST.get('state')
-        button = request.POST.get('button')
-        print button
+    likeType = button.split('_')[0];
 
-        likeType = button.split('_')[0];
-        print likeType
-
-         # Parse value
-        if state == 'like':
-            value = 1
-        elif state == 'dislike':
-            value = -1
-        else:
-            return JsonResp('error')
-
-
-        # Here code for question/answer
-        if likeType == 'QlikeBtn' or likeType == 'QdislikeBtn':
-            question_id = button.split('_')[1]    # Get id
-
-            try:
-                question = Question.objects.get(id=question_id)
-            except Question.DoesNotExist, e:
-                return JsonResp('error')
-
-            try:
-                state = question.likes.get(author=user)
-                exist = True
-                return JsonResp('value exist')
-            except QLike.DoesNotExist, e:
-                exist = False
-
-            # Many tap likes
-            # if exist:
-            #     state.value = value
-            #     state.save()
-            # else:
-            #     question.likes.add(QLike.objects.create(author=user, value=value))
-
-            # likes = question.likes.all()
-            # rating = 0
-            # for like in likes:
-            #     rating = rating + like.value
-
-            # question.rating = rating
-            # question.save()
-
-            # One tap likes
-            if not exist:
-                question.likes.add(QLike.objects.create(author=user, value=value))
-                question.rating = question.rating + value
-                question.save()
-
-            return JsonResp(question.rating)
-        elif likeType == 'AlikeBtn' or likeType == 'AdislikeBtn':
-            answer_id = button.split('_')[1]    # Get id
-
-            try:
-                answer = Answer.objects.get(id=answer_id)
-            except Answer.DoesNotExist, e:
-                return JsonResp('error')
-
-            try:
-                state = answer.likes.get(author=user)
-                exist = True
-                return JsonResp('value exist')
-            except ALike.DoesNotExist, e:
-                exist = False
-
-            # Many tap likes
-            # if exist:
-            #     state.value = value
-            #     state.save()
-            # else:
-            #     answer.likes.add(ALike.objects.create(author=user, value=value))
-
-            # likes = answer.likes.all()
-            # rating = 0
-            # for like in likes:
-            #     rating = rating + like.value
-
-            # answer.rating = rating
-            # answer.save()
-
-            # One tap likes
-            if not exist:
-                answer.likes.add(ALike.objects.create(author=user, value=value))
-                answer.rating = answer.rating + value
-                answer.save()
-            
-            return JsonResp(answer.rating)
-        else:
-            return JsonResp('error')
+     # Parse value
+    if state == 'like':
+        value = 1
+    elif state == 'dislike':
+        value = -1
     else:
-        raise Http404
+        return JsonResp('error')
 
-def correct_answer(request):  
-    if request.method == 'POST':
-        if not request.user.is_authenticated():
-            return JsonResp('403')
 
-        user = request.user
-        data = request.POST.get('correct_id')
-        correct_id = data.split('_')[1];
+    # Here code for question/answer
+    if likeType == 'QlikeBtn' or likeType == 'QdislikeBtn':
+        question_id = button.split('_')[1]    # Get id
 
         try:
-            answer = Answer.objects.get(id=correct_id)
-            question = answer.question
+            question = Question.objects.get(id=question_id)
+        except Question.DoesNotExist, e:
+            return JsonResp('error')
+
+        try:
+            state = question.likes.get(author=request.user)
+            exist = True
+            # return JsonResp('value exist')
+        except QLike.DoesNotExist, e:
+            exist = False
+
+        # Many tap likes
+        if exist:
+            state.value = value
+            state.save()
+        else:
+            question.likes.add(QLike.objects.create(author=request.user, value=value))
+
+        likes = question.likes.all()
+        rating = 0
+        for like in likes:
+            rating = rating + like.value
+
+        question.rating = rating
+        question.save()
+
+        # One tap likes
+        # if not exist:
+        #     question.likes.add(QLike.objects.create(author=user, value=value))
+        #     question.rating = question.rating + value
+        #     question.save()
+
+        return JsonResp(question.rating)
+    elif likeType == 'AlikeBtn' or likeType == 'AdislikeBtn':
+        answer_id = button.split('_')[1]    # Get id
+
+        try:
+            answer = Answer.objects.get(id=answer_id)
         except Answer.DoesNotExist, e:
             return JsonResp('error')
 
-        if question.author == user:
-            if question.correct_answer == 0:
-                question.correct_answer = correct_id
-                answer.correct_answer = True
-                question.save()
-                answer.save()
-                return JsonResp('OK')
-            else:
-                return JsonResp('value exist')
+        try:
+            state = answer.likes.get(author=request.user)
+            exist = True
+            # return JsonResp('value exist')
+        except ALike.DoesNotExist, e:
+            exist = False
+
+
+        # Many tap likes
+        if exist:
+            state.value = value
+            state.save()
         else:
-            return JsonResp('403')
+            answer.likes.add(ALike.objects.create(author=request.user, value=value))
+
+        likes = answer.likes.all()
+        rating = 0
+        for like in likes:
+            rating = rating + like.value
+
+        answer.rating = rating
+        answer.save()
+
+        # One tap likes
+        # if not exist:
+        #     answer.likes.add(ALike.objects.create(author=user, value=value))
+        #     answer.rating = answer.rating + value
+        #     answer.save()
+        
+        return JsonResp(answer.rating)
     else:
-        raise Http404
+        return JsonResp('error')
+
+@login_required
+@require_POST
+def correct_answer(request):  
+    data = request.POST.get('correct_id')
+    correct_id = data.split('_')[1];
+
+    try:
+        answer = Answer.objects.get(id=correct_id)
+        question = answer.question
+    except Answer.DoesNotExist, e:
+        return JsonResp('error')
+
+    if question.author == request.user:
+        if question.correct_answer == 0:
+            question.correct_answer = correct_id
+            answer.correct_answer = True
+            question.save()
+            answer.save()
+            return JsonResp('OK')
+        else:
+            return JsonResp('value exist')
+    else:
+        return JsonResp('403')
 
 
 def JsonResp(answer):

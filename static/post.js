@@ -58,10 +58,16 @@ window.onload = function() {
 
             // handle a successful response
             success : function(json) {
+                console.log(json);
+                
                 if (json == '403' || json == 'error' || json == 'value exist') {
                     return false;
                 } 
-                console.log(json); // log the returned json to the console
+                // var re = /^\d+$/
+                // if (!re.test(json)) {
+                //     console.log('catch');
+                //     return false;
+                // }
 
                 rating_id = button_id[0] + 'rating_' + button_id.split('_')[1];
                 // console.log(rating_id);
@@ -69,14 +75,14 @@ window.onload = function() {
 
                 if (state == 'like') {
                     document.getElementById(button_id).style.color = "green";
-                    document.getElementById(button_id).setAttribute("disabled", "true");
+                    // document.getElementById(button_id).setAttribute("disabled", "true");
                     document.getElementById(button_id[0] + "dis" + button_id.slice(1, button_id.length)).style.color = "initial";
-                    document.getElementById(button_id[0] + "dis" + button_id.slice(1, button_id.length)).setAttribute("disabled", "true");
+                    // document.getElementById(button_id[0] + "dis" + button_id.slice(1, button_id.length)).setAttribute("disabled", "true");
                 } else if (state == 'dislike') {
                     document.getElementById(button_id[0] + button_id.slice(4, button_id.length)).style.color = "initial";
-                    document.getElementById(button_id[0] + button_id.slice(4, button_id.length)).setAttribute("disabled", "true");
+                    // document.getElementById(button_id[0] + button_id.slice(4, button_id.length)).setAttribute("disabled", "true");
                     document.getElementById(button_id).style.color = "red";
-                    document.getElementById(button_id).setAttribute("disabled", "true");
+                    // document.getElementById(button_id).setAttribute("disabled", "true");
                 }
             }
         });
