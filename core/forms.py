@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from core.models import Question, Profile, Tag, Answer
 from django.contrib.auth.hashers import check_password
 
+import string
+import re
+
 
 class LoginForm(forms.Form):
 	username = forms.CharField(initial='', label='Username', max_length=100, 
@@ -125,6 +128,10 @@ class AskForm(forms.Form):
 		question = Question.objects.create(title=new_title, text=new_text, author=author)
 
 		if len(new_tags) != 0:
+			# Prepare
+			regex = re.compile('[%s]' % re.escape(string.punctuation))
+			new_tags = regex.sub(' ', new_tags)
+
 			tag_list = new_tags.split(' ')
 			for tag in tag_list:
 				t = Tag.objects.get_or_create(name=tag)
@@ -152,6 +159,7 @@ class AnswerForm(forms.Form):
 		answer = Answer.objects.create(text=text, author=author, question=question)
 
 		return answer
+
 
 class EditProfileForm(forms.Form):
 	first_name = forms.CharField(initial='', label='First name', max_length=100, required=True,
