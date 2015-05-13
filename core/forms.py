@@ -112,13 +112,16 @@ class AskForm(forms.Form):
 		'placeholder': 'Quickly find',
 		}))
 
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super(AskForm, self).__init__(*args, **kwargs)
 
-	def save(self, author_username):
+	def save(self):
 		new_title = self.cleaned_data['title']
 		new_text = self.cleaned_data['text']
 		new_tags = self.cleaned_data['tags']
 
-		author = User.objects.get(username=author_username)
+		author = self.request.user
 		question = Question.objects.create(title=new_title, text=new_text, author=author)
 
 		if len(new_tags) != 0:
@@ -137,7 +140,18 @@ class AnswerForm(forms.Form):
 			'placeholder': 'Enter your answer',
 			'rows':'3'
 			}))
-	
+
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super(AnswerForm, self).__init__(*args, **kwargs)
+
+	def save(self, question):
+		text = self.cleaned_data['text']
+		author = self.request.user
+
+		answer = Answer.objects.create(text=text, author=author, question=question)
+
+		return answer
 
 class EditProfileForm(forms.Form):
 	first_name = forms.CharField(initial='', label='First name', max_length=100, required=True,
@@ -162,7 +176,7 @@ class EditProfileForm(forms.Form):
 		new_last_name = self.cleaned_data['last_name']
 
 		try:
-			user = User.objects.get(username=self.request.user)
+			user = self.request.user
 		except User.DoesNotExist, e:
 			return Http404
 
@@ -196,7 +210,7 @@ class EditPhotoForm(forms.Form):
 		if check_pic:
 			name_pic = handleUploadedFile(check_pic)
 
-		user = User.objects.get(username=self.request.user)
+		user = self.request.user
 
 		os.remove(os.path.dirname(os.path.dirname(__file__)) + '/uploads/' + str(user.profile.filename))
 
@@ -230,7 +244,7 @@ class ChangePasswordForm(forms.Form):
 
 	def clean_password(self):
 		check_pass = self.cleaned_data['password']
-		user = User.objects.get(username=self.request.user)
+		user = self.request.user
 
 		if not check_password(check_pass, user.password):
 			raise ValidationError('Wrong password')
@@ -250,13 +264,12 @@ class ChangePasswordForm(forms.Form):
 		print self.cleaned_data.get('new_password')
 		new_pass = self.cleaned_data.get('new_password')
 
-		user = User.objects.get(username=self.request.user)
+		user = self.request.user
 
 		user.set_password(new_pass)
 		user.save()
 
 		return user
-
 
 
 def handleUploadedFile(f):

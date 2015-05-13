@@ -83,18 +83,15 @@ def new_answer(request):
     context = {}
 
     # if request.user.is_authenticated():
-    form = AnswerForm(request.POST or None)
+    form = AnswerForm(request.POST, request=request or None)
 
     if form.is_valid():
-        text = form.cleaned_data['text']
         page_id = request.POST.get('page_id')
         question_id = request.POST.get('question_id')
         count = request.POST.get('count')
-
-        author = User.objects.get(username=request.user)
         question = Question.objects.get(id=question_id)
 
-        answer = Answer.objects.create(text=text, author=author, question=question)
+        answer = form.save(question)
 
         # Check 'next page'
         # if new answer go to new page => page_id++
@@ -205,10 +202,10 @@ def base(request):
 def ask(request):
     context = {'form': AskForm}
     if request.method == "POST":
-        form = AskForm(request.POST or None)
+        form = AskForm(request.POST, request=request or None)
 
         if form.is_valid():
-            question = form.save(request.user)
+            question = form.save()
             return HttpResponseRedirect('/question/' + str(question.id))
         context['form'] = form
 
