@@ -427,7 +427,7 @@ def search(request):
     if len(r_list) == 0:
         raise Http404
 
-    question_list = pagination(request, r_list, len(r_list))
+    question_list = pagination(request, r_list, N)
         
 
     context = {'question_list': question_list}
