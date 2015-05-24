@@ -1,0 +1,29 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>WS</title>
+</head>
+
+<body>
+  Hello, world!!1
+
+<script type="text/javascript">
+  ws = new WebSocket("ws://127.0.0.1:8888/test");
+   
+  // и навешивает на новый объект три колл-бека:
+   
+  // первый вызовется, когда соединение будет установлено:
+  ws.onopen = function() { alert("Connection opened...") };
+
+   
+  // второй - когда соединено закроется
+  ws.onclose = function() { alert("Connection closed...") };
+   
+  // и, наконец, третий - каждый раз, когда браузер получает какие-то данные через веб-сокет
+  ws.onmessage = function(evt) { $("#msg").append("<p>"+evt.data+"</p>"); };
+  </script>
+
+</body>
+</html>

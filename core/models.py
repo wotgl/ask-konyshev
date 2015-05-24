@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+from djangosphinx import SphinxSearch
 
 #   Profile with User from django.contrib.auth.models;
 #   User include username, email, first_name, last_name, password etc
@@ -36,6 +37,8 @@ class Question(models.Model):
     likes = models.ManyToManyField(QLike)
     correct_answer = models.IntegerField(default=0)
 
+    search = SphinxSearch(index='ask_konyshev', weights={'title': 100, 'text': 90})
+
     def __unicode__(self):
         return str(self.title)
 
@@ -47,6 +50,7 @@ class ALike(models.Model):
 
 
 class Answer(models.Model):
+    title = models.CharField(max_length=255, default=0) # This field special for Sphinx search
     text = models.TextField()
     author = models.ForeignKey(User)
     date = models.DateTimeField(default=datetime.now)

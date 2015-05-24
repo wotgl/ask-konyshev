@@ -33,3 +33,20 @@ Web sockets
 tornado
 centrifuge
 twisted
+
+
+
+==================================================
+CRON
+crontab -e
+check unique script!!! 
+
+
+use morphology!!
+
+Primer Configuration slide!!!
+
+sql_attr_uint = id		#MUST HAVE
+sql_field_string <=> full text search
+
++ Real-time indexing!

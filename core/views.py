@@ -17,6 +17,9 @@ import json
 from django.template.context_processors import csrf
 from django.views.decorators.http import require_http_methods, require_POST
 from django.contrib.auth.decorators import login_required
+import memcache
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
 
 N = 10  # Number of questions on page
 number_of_answers = 10   # Number of answers on question page
@@ -37,6 +40,20 @@ def main(request):
 
     # Likes here
     context['likes'] = collectLikes(request, question_list)
+
+    # Delete old cache from template
+    # This code fix time delay in templates, when cache timeout is done
+    key = make_template_fragment_key('cache_tags')
+    cache.delete(key)
+    key = make_template_fragment_key('cache_users')
+    cache.delete(key)
+
+    # Get new cache data
+    mc = memcache.Client(['127.0.0.1:11211'], debug=0) 
+    context['tags'] = mc.get('tags')
+    context['users'] = mc.get('users')
+
+    
 
     return render(request, html, context)
 
@@ -400,6 +417,27 @@ def correct_answer(request):
             return JsonResp('value exist')
     else:
         return JsonResp('403')
+
+
+def search(request):
+    r = request.GET.get('r')
+
+    r_list = Question.search.query(r)
+
+    if len(r_list) == 0:
+        raise Http404
+
+    question_list = pagination(request, r_list, len(r_list))
+        
+
+    context = {'question_list': question_list}
+
+    # Likes here
+    context['likes'] = collectLikes(request, question_list)
+
+    context['r'] = r
+
+    return render(request, 'search.html', context)
 
 
 def JsonResp(answer):
