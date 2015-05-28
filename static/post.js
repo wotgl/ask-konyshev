@@ -1,4 +1,5 @@
 var foo = function() {
+    console.log("Start foo()");
 
     $("[id*=QlikeBtn_]").click(function() {
         button_id = $(this).attr('id');

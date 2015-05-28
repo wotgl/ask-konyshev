@@ -37,7 +37,7 @@ class Question(models.Model):
     likes = models.ManyToManyField(QLike)
     correct_answer = models.IntegerField(default=0)
 
-    search = SphinxSearch(index='ask_konyshev', weights={'title': 100, 'text': 90})
+    search = SphinxSearch(index='ask_index', weights={'title': 100, 'qtext': 90, 'atext': 90})
 
     def __unicode__(self):
         return str(self.title)
@@ -50,7 +50,6 @@ class ALike(models.Model):
 
 
 class Answer(models.Model):
-    title = models.CharField(max_length=255, default=0) # This field special for Sphinx search
     text = models.TextField()
     author = models.ForeignKey(User)
     date = models.DateTimeField(default=datetime.now)
@@ -58,8 +57,6 @@ class Answer(models.Model):
     correct_answer = models.BooleanField(default=False)
     question = models.ForeignKey(Question)
     likes = models.ManyToManyField(ALike)
-
-    search = SphinxSearch(index='ask_konyshev', weights={'title': 0, 'text': 90})
 
     def __unicode__(self):
         return str(self.text)

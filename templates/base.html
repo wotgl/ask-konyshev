@@ -28,7 +28,7 @@
               <div class="row">
                   <form id="search_form" action="/search" method="get">
                     <div class="form-group" >
-                      <input type="text" name="r" class="form-control search_field_class" id="search_line" placeholder="Search is all you need">
+                      <input type="text" name="q" class="form-control search_field_class" id="search_line" placeholder="Search is all you need">
                     </div>
                   </form>
               </div>
@@ -133,43 +133,16 @@
           
           <div class="Popular-Tags">
             <h3>Tags</h3>    
-            {% load cache %}
-
-            {% cache 10 cache_tags %}
-              {% for tag in tags %}
-                <a href="/tag/{{ tag.0 }}" id="{{ tag.0 }}">{{ tag.0 }}</a>
-                <script type="text/javascript">
-                var max = 24;
-                var min = 12;
-
-                var size = '{{ tag.0 }}'.length + 10;
-                if (size < min)
-                  size = min
-                else if (size > max)
-                  size = max
-                
-                try {
-                  document.getElementById('{{ tag.0 }}').style.fontSize = size.toString() + 'px';
-                } catch(e) {}
-                </script>
-              {% endfor %}
-            {% endcache %} 
-
-            
-
+              {% load tags %}
+              {% show_tags %}
           </div>
 
           <hr> <!-- mimi line -->
 
           <div class="Members">
             <h3>Members</h3>
-              {% load cache %}
-
-              {% cache 10 cache_users %}
-                {% for user in users %}
-                  <p><a href="/profile/{{ user.0 }}">{{ user.0 }} </a><p>
-                {% endfor %}
-              {% endcache %}  
+              {% load tags %}
+              {% show_users %}
           </div>
 
           <hr> <!-- mimi line -->
@@ -187,17 +160,8 @@
       <hr> <!-- mimi line -->   
     </div> <!-- /container -->
 
-    
 
 	  </div>
-
-
-
-		
-
-
-
-	
 
 	</body>
 </html>

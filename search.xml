@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sphinx:docset xmlns:sphinx="http://sphinxsearch.com/">
+<sphinx:document id="1">
+	<title>Тест</title>
+	<qtext>Текст</qtext>
+	<atext>Да-да русские комментарии! Круто! </atext>
+</sphinx:document><sphinx:document id="2">
+	<title>Test</title>
+	<qtext>some english text</qtext>
+	<atext>test ws again ws </atext>
+</sphinx:document></sphinx:docset>

@@ -1,4 +1,6 @@
  var WS = function() {
+    console.log("Start WS()");
+    foo();
     ws = new WebSocket("ws://127.0.0.1:8888/test");
 
     ws.onopen = function() {

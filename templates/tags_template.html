@@ -1,0 +1,20 @@
+<ul>
+{% for tag in tags %}
+  <a href="/tag/{{ tag.0 }}" id="{{ tag.0 }}">{{ tag.0 }}</a>
+    <script type="text/javascript">
+    var max = 24;
+    var min = 12;
+
+    var size = '{{ tag.0 }}'.length + 10;
+    if (size < min)
+      size = min
+    else if (size > max)
+      size = max
+    
+    try {
+      document.getElementById('{{ tag.0 }}').style.fontSize = size.toString() + 'px';
+    } catch(e) {}
+    </script>
+
+{% endfor %}
+</ul>
