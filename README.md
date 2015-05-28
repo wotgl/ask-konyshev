@@ -6,7 +6,7 @@ yami
 ```sh
 $ sudo apt-get install sphinxsearch
 ```
-- edit sphinx.conf (database, tables) and put to /etc/sphinxsearch/ 
+- edit sphinx.conf and put to /etc/sphinxsearch/ 
 - run indexer
 ```sh
 $ sudo indexer --all
