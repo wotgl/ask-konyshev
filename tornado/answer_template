@@ -1,0 +1,62 @@
+<li>
+<div class="row answer" id="answer_template">
+            <!-- left answer column -->
+            <div class="col-md-2" style="text-align: center;">
+                <a href="/profile/<%= author %>" class="author_link">
+                  <img src="/uploads/<%= filename %>" alt="avatar" class="img-circle avatar">
+                </a>
+                <h5 class="question_username">
+                    <a href="/profile/" style="color:aqua; text-decoration: none; background-color: none; color: white">
+                        <small>@<%= author %></small>
+                    </a>
+                </h5>
+                <h4 class="votes" id="Arating_<%= id %>"><%= rating %></h4>
+                <div style="text-align: center;">
+                    <form class="ALike">
+                        <input type="hidden" class="fast_link" name="answer_id" value="<%= id %>">
+
+                        <button type="submit" class="btn btn-default btn-xs Btn like" id="AlikeBtn_<%= id %>" name="like" class="btn btn-default btn-lg" style="border: none;" <%= auth %>>
+                          <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                        </button>
+                        <button type="submit" class="btn btn-default btn-xs Btn dislike" id="AdislikeBtn_<%= id %>" name="dislike" class="btn btn-default btn-lg" style="border: none;" <%= auth %>>
+                          <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                            
+                        <!-- Likes here -->
+
+                            <style type="text/css">
+                                #AlikeBtn_<%= id %> {
+                                    color: initial;
+                                    }
+                                #AdislikeBtn_<%= id %> {
+                                    color: initial;
+                                    }
+                            </style>
+                            
+                        <!-- end of Likes -->
+
+                    </form>
+                </div>
+            </div>
+            <!-- /left answer column -->
+            
+            <!-- right answer column -->
+            <div class="col-md-10">
+                <div class="text_answer" style="word-wrap: break-word;">
+                    <%= text %>
+                </div>
+
+                <br>
+                <button type="button" id="correct_<%= id %>"class="btn btn-success btn-xs btn-lg correct_answer" style="display: <%= check_author %>;">
+                    <span class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span> Correct
+                </button>
+            </div>
+            <!-- /right answer column -->
+        </div>
+            <br>
+    <div class="progress">
+      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%; background-color: #F2F2F2;">
+        <span class="sr-only">100% Complete</span>
+      </div>
+    </div>
+
+    </li>

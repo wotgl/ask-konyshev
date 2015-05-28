@@ -1,4 +1,4 @@
-window.onload = function() {
+var foo = function() {
 
     $("[id*=QlikeBtn_]").click(function() {
         button_id = $(this).attr('id');
@@ -29,24 +29,7 @@ window.onload = function() {
 
         return false;
     })
-
-    // $("[id*=dislikeBtn_]").click(function() {
-    //     button_id = $(this).attr('id');
-    //     console.log(button_id)
-    //     send(button_id, 'dislike');
-
-    //     return false;
-    // })
-    // $("[id*=likeBtn_]").click(function() {
-    //     button_id = $(this).attr('id');
-    //     console.log(button_id)
-    //     send(button_id, 'like');
-
-    //     return false;
-    // })
-
     
-
     function send(button_id, state) {
         data = {};
         data['button'] = button_id;
@@ -63,11 +46,6 @@ window.onload = function() {
                 if (json == '403' || json == 'error' || json == 'value exist') {
                     return false;
                 } 
-                // var re = /^\d+$/
-                // if (!re.test(json)) {
-                //     console.log('catch');
-                //     return false;
-                // }
 
                 rating_id = button_id[0] + 'rating_' + button_id.split('_')[1];
                 // console.log(rating_id);
@@ -146,3 +124,5 @@ window.onload = function() {
     });
 
 }
+
+window.onload = foo;

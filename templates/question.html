@@ -3,113 +3,115 @@
 {% block title %}question{% endblock %}
 
 {% block content %}
+<script type="text/javascript" src="/new_answer.js"></script>
+
 <br>
 
-<div class="row">
-	<div class="col-md-3" style="text-align: center;"	>
-		<a href="/profile/{{ question.author.username }}">
-	      <img src="/uploads/{{ question.author.profile.filename }}" alt="avatar" class="img-circle avatar" 
-	      style="margin-top: 25px; 
-	      width: 90px; 
-	      height: 90px;">
-	    </a>
-	    <h4 class="question_username">
-	    	<a href="/profile/{{ question.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
-	            <small>@{{ question.author.username }}</small>
-      		</a>
-	    </h4>
-	    <h4 class="votes" id="Qrating_{{ question.id }}">{{ question.rating }}</h4>
-	    <div style="text-align: center;">
-	    	<form class="QLike">
-	    		<input type="hidden" name="question_id" value="{{ question.id }}">
-	    		<button type="submit" class="btn btn-default btn-xs Btn" id="QlikeBtn_{{ question.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
-		  			<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-				</button>
-				<button type="submit" class="btn btn-default btn-xs Btn" id="QdislikeBtn_{{ question.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
-		  			<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-		  		</button>
+<div class="row teeest">
+    <div class="col-md-3" style="text-align: center;"   >
+        <a href="/profile/{{ question.author.username }}">
+          <img src="/uploads/{{ question.author.profile.filename }}" alt="avatar" class="img-circle avatar" 
+          style="margin-top: 25px; 
+          width: 90px; 
+          height: 90px;">
+        </a>
+        <h4 class="question_username" id="question_author" value="{{ question.author.username }}">
+            <a href="/profile/{{ question.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
+                <small>@{{ question.author.username }}</small>
+            </a>
+        </h4>
+        <h4 class="votes" id="Qrating_{{ question.id }}">{{ question.rating }}</h4>
+        <div style="text-align: center;">
+            <form class="QLike">
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                <button type="submit" class="btn btn-default btn-xs Btn" id="QlikeBtn_{{ question.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
+                    <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                </button>
+                <button type="submit" class="btn btn-default btn-xs Btn" id="QdislikeBtn_{{ question.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
+                    <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                </button>
 
-	    		<!-- Likes here -->
-		  		<script type="text/javascript">
-					$('#QlikeBtn_{{ question.id }}').prop('disabled', false);
-					$('#QdislikeBtn_{{ question.id }}').prop('disabled', false);
-				</script>
+                <!-- Likes here -->
+                <script type="text/javascript">
+                    $('#QlikeBtn_{{ question.id }}').prop('disabled', false);
+                    $('#QdislikeBtn_{{ question.id }}').prop('disabled', false);
+                </script>
 
-	    		{% with Qlikes.pop as Qlike %}   
-		    		{% if Qlike == 1 %}
-		    		<style type="text/css">
-						#QlikeBtn_{{ question.id }} {
-							color: green;
-							}
-						#QdislikeBtn_{{ question.id }} {
-							color: initial;
-							}
-					</style>
-					{% elif Qlike == -1 %}
-					<style type="text/css">
-						#QlikeBtn_{{ question.id }} {
-							color: initial;
-							}
-						#QdislikeBtn_{{ question.id }} {
-							color: red;
-							}
-					</style>
-					{% else %}
-					<style type="text/css">
-						#QlikeBtn_{{ question.id }} {
-							color: initial;
-							}
-						#QdislikeBtn_{{ question.id }} {
-							color: initial;
-							}
-					</style>
-					{% endif %}
-						
-					{% if not user.is_authenticated %}	
-				  		<script type="text/javascript">
-							$('#QlikeBtn_{{ question.id }}').prop('disabled', true);
-							$('#QdislikeBtn_{{ question.id }}').prop('disabled', true);
-						</script>
-					{% endif %}
-					
-			  	{% endwith %}	
-			  		
-			  	<!-- end of Likes -->
-	    	</form>
-	    </div>
-	</div>
+                {% with Qlikes.pop as Qlike %}   
+                    {% if Qlike == 1 %}
+                    <style type="text/css">
+                        #QlikeBtn_{{ question.id }} {
+                            color: green;
+                            }
+                        #QdislikeBtn_{{ question.id }} {
+                            color: initial;
+                            }
+                    </style>
+                    {% elif Qlike == -1 %}
+                    <style type="text/css">
+                        #QlikeBtn_{{ question.id }} {
+                            color: initial;
+                            }
+                        #QdislikeBtn_{{ question.id }} {
+                            color: red;
+                            }
+                    </style>
+                    {% else %}
+                    <style type="text/css">
+                        #QlikeBtn_{{ question.id }} {
+                            color: initial;
+                            }
+                        #QdislikeBtn_{{ question.id }} {
+                            color: initial;
+                            }
+                    </style>
+                    {% endif %}
+                        
+                    {% if not user.is_authenticated %}  
+                        <script type="text/javascript">
+                            $('#QlikeBtn_{{ question.id }}').prop('disabled', true);
+                            $('#QdislikeBtn_{{ question.id }}').prop('disabled', true);
+                        </script>
+                    {% endif %}
+                    
+                {% endwith %}   
+                    
+                <!-- end of Likes -->
+            </form>
+        </div>
+    </div>
 
 
-	<div class="col-md-9">
-		<!-- title -->
-		<h2>
-			{{ question.title }}
-		</h2>
-		<!-- /title -->
+    <div class="col-md-9">
+        <!-- title -->
+        <h2>
+            {{ question.title }}
+        </h2>
+        <!-- /title -->
 
-		<!-- text -->
-		<div class="text_question" style="word-wrap: break-word;">
-			{{ question.text }}
-		</div>
-		<!-- /text -->
+        <!-- text -->
+        <div class="text_question" style="word-wrap: break-word;">
+            {{ question.text }}
+        </div>
+        <!-- /text -->
 
-		<!-- tags -->
-		<div class="row">
-			<div class="col-md-12 tags_question">
-				<br>
-				<br>
-				{% if question.tags.count %}
-					Tags:
-					{% for tag in question.tags.all %}
-						<a href="/tag/{{ tag.name }}">{{ tag.name }} </a>
-					{% endfor %}
-				{% endif %}
-			</div>
-		</div>
-		<!-- /tags -->
-	</div>
+        <!-- tags -->
+        <div class="row">
+            <div class="col-md-12 tags_question">
+                <br>
+                <br>
+                {% if question.tags.count %}
+                    Tags:
+                    {% for tag in question.tags.all %}
+                        <a href="/tag/{{ tag.name }}">{{ tag.name }} </a>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <!-- /tags -->
+    </div>
 
-	
+    
 </div>
 
 <p style="text-align: right;margin-top: 20px;">{{ question.answer_set.count }} Answers </p>
@@ -127,178 +129,177 @@
 
 
 <!-- answers -->
-	<ul class="list-unstyled">
-	{% for answer in answer_list %}
-	<!-- style - because navbar; check base.css -->
-	<a name="{{ answer.id }}" style="padding-top: 70px;"></a>
-	<li>
-		{% if answer.correct_answer %}
-		<style type="text/css">
-		#answer_{{ answer.id }} {
-			border: 2px solid green;
-			border-bottom: 0px;
-			border-top: 0px;
-			};
-		</style>
-		{% endif %}
-		<div class="row answer" id="answer_{{ answer.id }}">
-			<!-- left answer column -->
-			<div class="col-md-2" style="text-align: center;">
-				<a href="/profile/{{ answer.author.username }}">
-			      <img src="/uploads/{{ answer.author.profile.filename }}" alt="avatar" class="img-circle avatar">
-			    </a>
-			    <h5 class="question_username">
-			    	<a href="/profile/{{ answer.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
-                    	<small>@{{ answer.author.username }}</small>
-                  	</a>
-			    </h5>
-			    <h4 class="votes" id="Arating_{{ answer.id }}">{{ answer.rating }}</h4>
-			    <div style="text-align: center;">
-			    	<form class="ALike">
-			    		<input type="hidden" name="answer_id" value="{{ answer.id }}">
+    <ul class="list-unstyled" id="answers_list">
+    {% for answer in answer_list %}
+    <!-- style - because navbar; check base.css -->
+    <a name="{{ answer.id }}" style="padding-top: 70px;"></a>
+    <li>
+        {% if answer.correct_answer %}
+        <style type="text/css">
+        #answer_{{ answer.id }} {
+            border: 2px solid green;
+            border-bottom: 0px;
+            border-top: 0px;
+            };
+        </style>
+        {% endif %}
+        <div class="row answer" id="answer_{{ answer.id }}">
+            <!-- left answer column -->
+            <div class="col-md-2" style="text-align: center;">
+                <a href="/profile/{{ answer.author.username }}" class="author_link">
+                  <img src="/uploads/{{ answer.author.profile.filename }}" alt="avatar" class="img-circle avatar">
+                </a>
+                <h5 class="question_username">
+                    <a href="/profile/{{ answer.author.username }}" style="color:aqua; text-decoration: none; background-color: none; color: white">
+                        <small>@{{ answer.author.username }}</small>
+                    </a>
+                </h5>
+                <h4 class="votes" id="Arating_{{ answer.id }}">{{ answer.rating }}</h4>
+                <div style="text-align: center;">
+                    <form class="ALike">
+                        <input type="hidden" class="fast_link" name="answer_id" value="{{ answer.id }}">
 
-						<button type="submit" class="btn btn-default btn-xs Btn" id="AlikeBtn_{{ answer.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
-						  <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-						</button>
-						<button type="submit" class="btn btn-default btn-xs Btn" id="AdislikeBtn_{{ answer.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
-						  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-							
-					  	<!-- Likes here -->
-				  		<script type="text/javascript">
-							$('#AlikeBtn_{{ answer.id }}').prop('disabled', false);
-							$('#AdislikeBtn_{{ answer.id }}').prop('disabled', false);
-						</script>
-			    		{% with likes.pop as like %}   
-				    		{% if like == 1 %}
-				    		<style type="text/css">
-								#AlikeBtn_{{ answer.id }} {
-									color: green;
-									}
-								#AdislikeBtn_{{ answer.id }} {
-									color: initial;
-									}
-							</style>
-							{% elif like == -1 %}
-							<style type="text/css">
-								#AlikeBtn_{{ answer.id }} {
-									color: initial;
-									}
-								#AdislikeBtn_{{ answer.id }} {
-									color: red;
-									};
-							</style>
-							{% else %}
-							<style type="text/css">
-								#AlikeBtn_{{ answer.id }} {
-									color: initial;
-									}
-								#AdislikeBtn_{{ answer.id }} {
-									color: initial;
-									}
-							</style>
-							{% endif %}
+                        <button type="submit" class="btn btn-default btn-xs Btn like" id="AlikeBtn_{{ answer.id }}" name="like" class="btn btn-default btn-lg" style="border: none;">
+                          <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                        </button>
+                        <button type="submit" class="btn btn-default btn-xs Btn dislike" id="AdislikeBtn_{{ answer.id }}" name="dislike" class="btn btn-default btn-lg" style="border: none;">
+                          <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                            
+                        <!-- Likes here -->
+                        <script type="text/javascript">
+                            $('#AlikeBtn_{{ answer.id }}').prop('disabled', false);
+                            $('#AdislikeBtn_{{ answer.id }}').prop('disabled', false);
+                        </script>
+                        {% with likes.pop as like %}   
+                            {% if like == 1 %}
+                            <style type="text/css">
+                                #AlikeBtn_{{ answer.id }} {
+                                    color: green;
+                                    }
+                                #AdislikeBtn_{{ answer.id }} {
+                                    color: initial;
+                                    }
+                            </style>
+                            {% elif like == -1 %}
+                            <style type="text/css">
+                                #AlikeBtn_{{ answer.id }} {
+                                    color: initial;
+                                    }
+                                #AdislikeBtn_{{ answer.id }} {
+                                    color: red;
+                                    };
+                            </style>
+                            {% else %}
+                            <style type="text/css">
+                                #AlikeBtn_{{ answer.id }} {
+                                    color: initial;
+                                    }
+                                #AdislikeBtn_{{ answer.id }} {
+                                    color: initial;
+                                    }
+                            </style>
+                            {% endif %}
 
-							{% if not user.is_authenticated %}	
-						  		<script type="text/javascript">
-									$('#AlikeBtn_{{ answer.id }}').prop('disabled', true);
-									$('#AdislikeBtn_{{ answer.id }}').prop('disabled', true);
-								</script>
-							{% endif %}
-							
-					  	{% endwith %}	
-					  		
-					  	<!-- end of Likes -->
+                            {% if not user.is_authenticated %}  
+                                <script type="text/javascript">
+                                    $('#AlikeBtn_{{ answer.id }}').prop('disabled', true);
+                                    $('#AdislikeBtn_{{ answer.id }}').prop('disabled', true);
+                                </script>
+                            {% endif %}
+                            
+                        {% endwith %}   
+                            
+                        <!-- end of Likes -->
 
-			    	</form>
-			    </div>
-			</div>
-			<!-- /left answer column -->
-			
-			<!-- right answer column -->
-			<div class="col-md-10">
-				<div class="text_answer" style="word-wrap: break-word;">
-					{{ answer.text }}
-				</div>
+                    </form>
+                </div>
+            </div>
+            <!-- /left answer column -->
+            
+            <!-- right answer column -->
+            <div class="col-md-10">
+                <div class="text_answer" style="word-wrap: break-word;">
+                    {{ answer.text }}
+                </div>
 
-				<br>
-				{% if user.is_authenticated and author and question.correct_answer == 0 %}
-				<button type="button" id="correct_{{ answer.id }}"class="btn btn-success btn-xs btn-lg correct_answer">
-				 	<span class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span> Correct
-				</button>
-				{% endif %}
-			</div>
-			<!-- /right answer column -->
+                <br>
+                {% if user.is_authenticated and author and question.correct_answer == 0 %}
+                <button type="button" id="correct_{{ answer.id }}"class="btn btn-success btn-xs btn-lg correct_answer">
+                    <span class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span> Correct
+                </button>
+                {% endif %}
+            </div>
+            <!-- /right answer column -->
+        </div>
+    
+    <br>
+    <div class="progress">
+      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%; background-color: #F2F2F2;">
+        <span class="sr-only">100% Complete</span>
+      </div>
+    </div>
 
-		</div>
+    </li>
+    {% endfor %} 
+</ul>
 
-	</li>
-	<br>
-	<div class="progress">
-	  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%; background-color: #F2F2F2;">
-	    <span class="sr-only">100% Complete</span>
-	  </div>
-	</div>
-	{% endfor %}
+<!-- paginator -->
+    <div style="text-align: right; margin-top: -20px">
+        <div class="pagination">
+            <span class="step-links">
+                {% if answer_list.has_previous %}
+                    <a href="?page={{ answer_list.previous_page_number }}">previous</a>
+                {% endif %}
 
-	<!-- paginator -->
-	<div style="text-align: right; margin-top: -20px">
-		<div class="pagination">
-		    <span class="step-links">
-		        {% if answer_list.has_previous %}
-		            <a href="?page={{ answer_list.previous_page_number }}">previous</a>
-		        {% endif %}
+                <span class="current">
+                    Page {{ answer_list.number }} of {{ answer_list.paginator.num_pages }}
+                </span>
 
-		        <span class="current">
-		            Page {{ answer_list.number }} of {{ answer_list.paginator.num_pages }}
-		        </span>
-
-		        {% if answer_list.has_next %}
-		            <a href="?page={{ answer_list.next_page_number }}">next</a>
-		        {% endif %}
-		    </span>
-		</div>
-	</div>
-	<!-- /paginator -->
-
-
+                {% if answer_list.has_next %}
+                    <a href="?page={{ answer_list.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    <!-- /paginator -->
 <!-- /answers -->
 
 <br>
 
 <!-- add answer -->
 <div class="row new_answer">
-	<!-- <textarea class="form-control" rows="3" placeholder="Enter your answer"></textarea>
-	<br>
-	<button type="button" class="btn btn-success">Success</button> -->
+    <!-- <textarea class="form-control" rows="3" placeholder="Enter your answer"></textarea>
+    <br>
+    <button type="button" class="btn btn-success">Success</button> -->
 
-	
-	    {% if user.is_authenticated %}
-		    {% if message %}
-			    <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
-			        <h5>{{ message.message | safe }}</h5>
-			    </div>
-			{% endif %}
+    
+        {% if user.is_authenticated %}
+            {% if message %}
+                <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+                    <h5>{{ message.message | safe }}</h5>
+                </div>
+            {% endif %}
 
-			<form action="{% url 'new_answer' %}" method="post" enctype="multipart/form-data">
-			    {% csrf_token %}
-				{% for field in form %}
-				    <div class="fieldWrapper">
-				        <div class="form-group">
-				        	{{ field.label_tag }} 
-				        	{{ field }}
-				        </div>
-				    </div>
-				{% endfor %}
-				<button type="submit" class="btn btn-success">Success</button>
-				<input type="hidden" name="question_id" value="{{ question.id }}">
-				<input type="hidden" name="page_id" value="{{ answer_list.paginator.num_pages }}">
-				<input type="hidden" name="count" value="{{ answer_list.paginator.count }}">
-			</form>
-		{% else %}
-			<div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
-		        <h5><a href="/login">Login</a> or <a href="/signup">sign up</a> to answer</h5>
-		    </div>
-		{% endif %}
+            <form action="{% url 'new_answer' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="fieldWrapper">
+                        <div class="form-group">
+                            {{ field.label_tag }} 
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-success">Success</button>
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                <input type="hidden" name="page_id" value="{{ answer_list.paginator.num_pages }}">
+                <input type="hidden" name="count" value="{{ answer_list.paginator.count }}">
+            </form>
+        {% else %}
+            <div class="alert alert-danger error__block" role="alert" style="padding: 5px;">
+                <h5><a href="/login">Login</a> or <a href="/signup">sign up</a> to answer</h5>
+            </div>
+        {% endif %}
 
 </div>
 

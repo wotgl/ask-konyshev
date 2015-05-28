@@ -20,6 +20,9 @@ from django.contrib.auth.decorators import login_required
 import memcache
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
+import urllib2
+import requests # $ pip install requests
+import json
 
 N = 10  # Number of questions on page
 number_of_answers = 10   # Number of answers on question page
@@ -33,6 +36,23 @@ def main(request):
     elif request.path == '/popular/':
         question_list = Question.objects.order_by('-rating').all()
         html = 'popular.html'
+
+
+
+
+    # json_data = json.dumps({'new_answer': {'id': question_list[0].id, 
+    # 'text': question_list[0].text, 
+    # 'author': question_list[0].author.username, 
+    # 'rating': question_list[0].rating,
+    # 'filename': str(question_list[0].author.profile.filename),
+    # 'url': 'http://127.0.0.1/question/' + str(question_list[0].id),
+    # 'page_id': 0}
+    # })
+
+    # requests.post('http://127.0.0.1:8888/', data=json_data)
+
+
+
 
     # Create Paginator
     question_list = pagination(request, question_list, N)
@@ -64,6 +84,17 @@ def question(request, question_id):
         question = Question.objects.get(id=question_id)
     except Question.DoesNotExist, e:
         raise Http404
+
+
+    # json_data = json.dumps({'id': question.id, 
+    #     'text': question.text, 
+    #     'author': question.author.username, 
+    #     'rating': question.rating,
+    #     'filename': str(question.author.profile.filename),
+    #     })
+
+    # requests.post('http://127.0.0.1:8888/', data=json_data)
+
 
     # Get answers list
     answer_list = question.answer_set.all()
@@ -116,6 +147,24 @@ def new_answer(request):
         if count % number_of_answers == 0 and not count == 0:
             page_id = int(page_id)
             page_id = page_id + 1
+
+
+        # if page_id == str(1):
+        #     help_url = 'http://127.0.0.1/question/' + str(question_id) + '/'
+        # else:
+        #     help_url = 'http://127.0.0.1/question/' + str(question_id) + '/?page=' + str(page_id)
+
+        json_data = json.dumps({'new_answer': {'id': answer.id, 
+        'text': answer.text, 
+        'author': answer.author.username, 
+        'rating': answer.rating,
+        'filename': str(answer.author.profile.filename),
+        'url': 'http://127.0.0.1/question/' + str(question_id),
+        'page_id': page_id}
+        })
+
+        requests.post('http://127.0.0.1:8888/', data=json_data)
+
 
         # helpLink = 'http://127.0.0.1/question/' + str(question_id) + '?page=' + str(page_id) + '#' + str(answer.id)
         # sendMail(question.author.email, question, answer, helpLink)
@@ -359,6 +408,7 @@ def like(request):
         try:
             answer = Answer.objects.get(id=answer_id)
         except Answer.DoesNotExist, e:
+            print 'YES!'
             return JsonResp('error')
 
         try:
@@ -419,9 +469,19 @@ def correct_answer(request):
         return JsonResp('403')
 
 
+from itertools import chain
 def search(request):
     r = request.GET.get('r')
 
+    # q_list = Question.search.query(r)
+    # a_list = Answer.search.query(r)
+
+    # for a in a_list:
+    #     q = list(Question.objects.get(id=a.question.id))
+    #     r_list = list(chain(q_list, q))
+
+    
+    # r_list = list(chain(q_list, a_list))
     r_list = Question.search.query(r)
 
     if len(r_list) == 0:

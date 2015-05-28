@@ -92,7 +92,7 @@ class SignUpForm(forms.Form):
 			Profile.objects.create(user=user, filename=name_pic)
 			return user
 		else:
-			filename = '/default/' + new_username[0].lower() + '.png'		# Default avatar
+			filename = 'default/' + new_username[0].lower() + '.png'		# Default avatar
         	Profile.objects.create(user=user, filename=filename)
         	return user
 

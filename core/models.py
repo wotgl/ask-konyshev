@@ -59,5 +59,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question)
     likes = models.ManyToManyField(ALike)
 
+    search = SphinxSearch(index='ask_konyshev', weights={'title': 0, 'text': 90})
+
     def __unicode__(self):
         return str(self.text)

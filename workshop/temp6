@@ -1,0 +1,11 @@
+for tags and userd use tamplate tags!
+
+@reqister.inclusion_tag(html)
+def foo():
+	pass
+
+
+
+use js template!!
+moustacheJS
+RasigJS
